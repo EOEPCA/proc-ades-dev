@@ -1,0 +1,42 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "C++ HelloWorld Build",
+			"type": "shell",
+			"command": "/usr/bin/g++",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-g",
+				"./test.cpp",
+				"-o",
+				"./test"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/static/cpp_test"
+			},
+			"group": "build",
+			"detail": "compiler: /usr/bin/g++"
+		},
+		{
+			"label": "C++ HelloWorld Run",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}/static/cpp_test"
+			},
+			"command": "./test",
+			"dependsOrder": "sequence",
+			"dependsOn": ["C++ HelloWorld Build"]
+		},
+		{
+			"label": "C++ HelloWorld",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}/static/cpp_test"
+			},
+			"command": "rm ./test",
+			"dependsOrder": "sequence",
+			"dependsOn": [ "C++ HelloWorld Run"]
+		}
+	]
+}
