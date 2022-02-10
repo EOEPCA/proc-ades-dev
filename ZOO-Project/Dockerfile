@@ -396,7 +396,7 @@ RUN set -ex \
 ENV LD_LIBRARY_PATH /usr/miniconda3/envs/ades-dev/lib:$LD_LIBRARY_PATH
 ENV PATH /usr/miniconda3/bin:$PATH
 RUN ln -s /usr/miniconda3/envs/ades-dev/lib/libpython3.8.so.1.0 /usr/lib/libpython3.8.so.1.0
-
+RUN chmod -R 777 /usr/lib/cgi-bin 
 # For using another port than 80, change the value below.
 # remember to also change the ports in docker-compose.yml
 EXPOSE 80
