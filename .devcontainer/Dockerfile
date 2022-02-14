@@ -1,6 +1,9 @@
 
 FROM ubuntu:focal-20220113
 
+
+# procadesdev:latest
+
 ENV DEBIAN_FRONTEND noninteractive
 
 # Various cli tools
@@ -12,16 +15,18 @@ RUN apt-get -y install gcc mono-mcs cmake && \
     apt install -y build-essential libcgicc-dev gdb
 
 # Miniconda
-ENV PATH="/root/miniconda3/bin:${PATH}"
-ARG PATH="/root/miniconda3/bin:${PATH}"
 RUN apt-get update
 RUN wget \
-    https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
-    && mkdir /root/.conda \
-    && bash Miniconda3-latest-Linux-x86_64.sh -b \
-    && rm -f Miniconda3-latest-Linux-x86_64.sh 
-RUN conda --version
+    https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh \
+    && bash Miniconda3-py39_4.10.3-Linux-x86_64.sh -b -p /usr/miniconda3 \
+    && rm -f Miniconda3-py39_4.10.3-Linux-x86_64.sh  
 
+RUN conda --version
+RUN conda create -n ades-dev python=3.8 workflow-executor=1.0.23 cookiecutter -y -c conda-forge -c eoepca
+
+ENV PATH="/usr/miniconda3/bin:${PATH}"
+ARG PATH="/usr/miniconda3/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/usr/miniconda3/envs/ades-dev/lib:$LD_LIBRARY_PATH"
 
 
 # Install Docker CE CLI
@@ -36,7 +41,3 @@ RUN apt-get update \
 RUN LATEST_COMPOSE_VERSION=$(curl -sSL "https://api.github.com/repos/docker/compose/releases/latest" | grep -o -P '(?<="tag_name": ").+(?=")') \
     && curl -sSL "https://github.com/docker/compose/releases/download/${LATEST_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
     && chmod +x /usr/local/bin/docker-compose
-
-
-# Remove apt lists
-RUN rm -rf /var/lib/apt/lists/*

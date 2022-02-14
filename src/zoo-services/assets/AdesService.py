@@ -1,8 +1,10 @@
 from pprint import pprint
-from workflow_executor import prepare, client, result, clean, helpers, execute
+#from workflow_executor import prepare, client, result, clean, helpers, execute
 from time import sleep
 import zoo
 import sys
+
+import json, os
 
 
 def prepare():
@@ -28,6 +30,10 @@ def run():
 
 def AdesService(conf,inputs,outputs):
     
+    outputs["Result"]["value"]="Hello from Python World ! \n env: " + json.dumps(dict(os.environ), indent=4, sort_keys=True) + "\n\n dir(zoo): " + json.dumps(dir(zoo), indent=4, sort_keys=True) + "\n\n conf: " +  json.dumps(conf , indent=4, sort_keys=True) + "\n\n inputs: " + json.dumps(inputs, indent=4, sort_keys=True) + "\n\n outputs: " + json.dumps(outputs, indent=4, sort_keys=True)
+    return zoo.SERVICE_SUCCEEDED
+
+
     # Prepare process namespace"
     prepare()
 

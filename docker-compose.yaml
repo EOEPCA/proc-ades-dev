@@ -1,0 +1,14 @@
+version: '3'
+services:
+  zookernel:
+    platform: linux/amd64
+    image: ades:latest
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - ./src/zoo-services/services/DeployProcess.py:/usr/lib/cgi-bin/DeployProcess.py
+      - ./src/zoo-services/services/DeployProcess.zcfg:/usr/lib/cgi-bin/DeployProcess.zcfg
+      - ./src/zoo-services/assets:/usr/lib/cgi-bin/assets
+      - ./src/zoo-services/assets/AdesService.py:/usr/lib/cgi-bin/AdesService.py
+      - ./src/zoo-services/assets/AdesService.zcfg:/usr/lib/cgi-bin/AdesService.zcfg

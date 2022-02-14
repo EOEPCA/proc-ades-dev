@@ -67,8 +67,8 @@ def DeployProcess(conf, inputs, outputs):
         copy_tree(path, zooservices_folder)
 
         # removing tmp directory
-        shutil.rmtree(path)
-        shutil.rmtree(tmpFolderApplicationPackage1)
+        #shutil.rmtree(path)
+        #shutil.rmtree(tmpFolderApplicationPackage1)
 
         print(f"cookicutter called", file=sys.stderr)
         outputs["deployResult"]["value"] = f"Service {serviceName} was successfully deployed in {zooservices_folder}"
