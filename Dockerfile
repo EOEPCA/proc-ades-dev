@@ -55,7 +55,8 @@ RUN apt-get update && apt-get install -y software-properties-common git wget vim
 RUN apt-get install -y flex bison libfcgi-dev libxml2 libxml2-dev curl libssl-dev autoconf apache2 subversion libmozjs185-dev python3-dev python3-setuptools build-essential libxslt1-dev uuid-dev libjson-c-dev libmapserver-dev
 RUN add-apt-repository ppa:ubuntugis/ppa && apt-get update -y
 RUN apt-get -y install libgdal-dev
-RUN ln -s /usr/lib/x86_64-linux-gnu/libfcgi.a /usr/lib/
+# if you remove --with-db-backend from the configure command, uncomment the following line
+#RUN ln -s /usr/lib/x86_64-linux-gnu/libfcgi.a /usr/lib/
 RUN apt-get update
 RUN apt install -y apache2 libapache2-mod-fcgid wget \
                 && a2enmod actions fcgid alias proxy_fcgi \
@@ -68,7 +69,7 @@ WORKDIR /opt/ZOO-Project
 RUN make -C ./thirds/cgic206 libcgic.a
 RUN cd ./zoo-project/zoo-kernel \
      && autoconf \
-     && ./configure --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=3.8 --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr \
+     && ./configure --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=3.8 --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr --with-db-backend \
      && sed -i "s/-DACCEPT_USE_OF_DEPRECATED_PROJ_API_H/-DPROJ_VERSION_MAJOR=8/g" ./ZOOMakefile.opts \
      && make -j4\
      && make install \
@@ -85,9 +86,11 @@ RUN cd ./zoo-project/zoo-kernel \
 RUN cp ./docker/.htaccess /var/www/html/.htaccess \
      && ln -s /tmp/ /var/www/html/temp 
 
+COPY assets/default.conf /etc/apache2/sites-available/000-default.conf
+
 # Remove apt lists
 RUN rm -rf /var/lib/apt/lists/*
-RUN chmod -R 777 /usr/lib/cgi-bin 
+RUN chmod -R 777 /usr/lib/cgi-bin
 
 EXPOSE 80
 CMD ["apachectl", "-D", "FOREGROUND"]

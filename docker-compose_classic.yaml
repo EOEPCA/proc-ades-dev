@@ -7,8 +7,11 @@ services:
     ports:
       - "80:80"
     volumes:
+      - ./assets/classic/main.cfg:/usr/lib/cgi-bin/main.cfg
+      - ./assets/classic/oas.cfg:/usr/lib/cgi-bin/oas.cfg
+      - ./src/zoo-services/assets/cookiecutter-templates:/usr/lib/cgi-bin/assets/cookiecutter-templates
+      - ./src/zoo-services/assets/cookiecutter_config.yaml:/usr/lib/cgi-bin/assets/cookiecutter_config.yaml
       - ./src/zoo-services/services/DeployProcess.py:/usr/lib/cgi-bin/DeployProcess.py
       - ./src/zoo-services/services/DeployProcess.zcfg:/usr/lib/cgi-bin/DeployProcess.zcfg
-      - ./src/zoo-services/assets:/usr/lib/cgi-bin/assets
       - ./src/zoo-services/assets/AdesService.py:/usr/lib/cgi-bin/AdesService.py
       - ./src/zoo-services/assets/AdesService.zcfg:/usr/lib/cgi-bin/AdesService.zcfg
