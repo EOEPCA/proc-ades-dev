@@ -1,9 +1,11 @@
-# Install the extension
+# VS Code Dev Renote Container
+
+## Install the extension
 From the VS code marketplace install the **Remote - Containers** extension which lets you run Visual Studio Code inside a Docker container.
 ![Remote - Containers](./images/containers-extension.png)
 
 
-# Get Started
+## Get Started
 
 - With the Remote - Containers extension installed, you will see a new Status bar item at the far left from which you can quickly check in which context VS Code is running (local or remote).
 
