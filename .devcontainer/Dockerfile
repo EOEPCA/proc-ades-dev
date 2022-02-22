@@ -21,11 +21,12 @@ RUN wget \
     && bash Miniconda3-py39_4.10.3-Linux-x86_64.sh -b -p /usr/miniconda3 \
     && rm -f Miniconda3-py39_4.10.3-Linux-x86_64.sh  
 
+ENV PATH="/usr/miniconda3/bin:${PATH}"
+ARG PATH="/usr/miniconda3/bin:${PATH}"
 RUN conda --version
 RUN conda create -n ades-dev python=3.8 workflow-executor=1.0.23 cookiecutter -y -c conda-forge -c eoepca
 
-ENV PATH="/usr/miniconda3/bin:${PATH}"
-ARG PATH="/usr/miniconda3/bin:${PATH}"
+
 ENV LD_LIBRARY_PATH="/usr/miniconda3/envs/ades-dev/lib:$LD_LIBRARY_PATH"
 
 
