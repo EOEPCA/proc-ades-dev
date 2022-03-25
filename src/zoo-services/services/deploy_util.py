@@ -67,6 +67,12 @@ class Process:
             if key in workflow:
                 version = str(workflow[key])
                 break
+        if not version:
+            for key in ['softwareVersion', 'version']:
+                key = "{0}:{1}".format(software_namespace_prefix, key)
+                if key in cwl:
+                    version = str(cwl[key])
+                    break
 
         if not version:
             raise Exception("Workflow '{0}' has no version".format(workflow['id']))
@@ -413,18 +419,3 @@ class ProcessOutput:
 
             self.type = type_name
 
-
-    
-
-
-# ------------------------------------------------------------------------------
-
-with open(sys.argv[1], 'r') as stream:
-    try:
-        cwl = yaml.safe_load(stream)
-        stream.close()
-    except yaml.YAMLError as e:
-        print("ERROR")
-
-process = Process.create_from_cwl(cwl)
-process.write_zcfg(sys.stdout)
