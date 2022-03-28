@@ -31,7 +31,7 @@ def run():
     sleep(3)
 
 
-def AdesService(conf, inputs, outputs):
+def ades_test_service(conf, inputs, outputs):
 
     outputs["Result"]["value"] = (
         "Hello from Python World ! \n env: "

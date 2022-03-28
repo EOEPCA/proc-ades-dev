@@ -1,10 +1,10 @@
-[AdesService]
+[AdesTestService]
  Title = Create a welcome message string.
  Abstract = Create a welcome string.
  processVersion = 2
  storeSupported = true
  statusSupported = true
- serviceProvider = AdesService
+ serviceProvider = ades_test_service
  serviceType = Python
  <MetaData>
    title = Demo
