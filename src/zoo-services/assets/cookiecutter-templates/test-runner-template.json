@@ -1,0 +1,8 @@
+{
+  "cookiecutter": {
+    "workflow_id": "dnbr",
+    "outputs": "",
+    "inputs": "",
+    "_template": "/tmp/cookiecutter-templates/test-runner-template"
+  }
+}
