@@ -13,5 +13,4 @@ services:
       - ./src/zoo-services/assets/cookiecutter_config.yaml:/tmp/cookiecutter_config.yaml
       - ./src/zoo-services/services/DeployProcess.py:/usr/lib/cgi-bin/DeployProcess.py
       - ./src/zoo-services/services/DeployProcess.zcfg:/usr/lib/cgi-bin/DeployProcess.zcfg
-      - ./src/zoo-services/services/GitService.py:/usr/lib/cgi-bin/GitService.py
-      - ./src/zoo-services/services/GitService.zcfg:/usr/lib/cgi-bin/GitService.zcfg
+      - ./src/zoo-services/services/deploy_util.py:/usr/lib/cgi-bin/deploy_util.py

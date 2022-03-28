@@ -142,7 +142,6 @@ def DeployProcess(conf, inputs, outputs):
     application_package_file = refactor_with_service_name(application_package_file, service_tmp_folder, service_name)
 
     # copy service contents to /usr/lib/cgi-bin
-    print(f"copying {service_tmp_folder} to {zooservices_folder}", file=sys.stderr)
     copy_tree(service_tmp_folder, zooservices_folder)
 
     # removing service_tmp_folder
@@ -150,50 +149,4 @@ def DeployProcess(conf, inputs, outputs):
         
 
     return zoo.SERVICE_SUCCEEDED
-
-    print(f"Creating {service_name}", file=sys.stderr)
-    try:
-        if deploy_template.endswith(".git"):
-            template_name=Path(deploy_template).stem
-            template_folder= os.path.join(cookiecutter_templates_folder,template_name)
-            
-            # checking if template had already been cloned
-            if os.path.isdir(template_folder):
-                shutil.rmtree(template_folder)
-
-            os.system(f"git clone {deploy_template} {template_folder}" )
-        else:
-            template_folder=deploy_template
-
-        # Create project from local template
-        print(f"calling cookicutter ", file=sys.stderr)
-        path = cookiecutter(template_folder,
-            extra_context={
-                "workflow_id": "test",
-            },
-            output_dir=tmp_folder_application_package1,
-            no_input=True,
-            config_file="/tmp/cookiecutter_config.yaml",
-            overwrite_if_exists=True,
-        )
-
-        # copy service contents to /usr/lib/cgi-bin
-        print(f"copying {path} to {zooservices_folder}", file=sys.stderr)
-        copy_tree(path, zooservices_folder)
-
-        # removing tmp directory
-        shutil.rmtree(path)
-        shutil.rmtree(tmp_folder_application_package1)
-
-        print(f"cookicutter called", file=sys.stderr)
-        outputs["deployResult"][
-            "value"
-        ] = f"Service {service_name} was successfully deployed in {zooservices_folder}"
-        return zoo.SERVICE_SUCCEEDED
-    except Exception as error:
-        errorMsg = (
-            f"An error occured during the deploy of service {service_name}: {error}"
-        )
-        print(errorMsg, file=sys.stderr)
-        raise error
 
