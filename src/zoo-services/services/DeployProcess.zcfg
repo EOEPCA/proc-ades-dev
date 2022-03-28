@@ -23,7 +23,21 @@
 			MimeType = application/cwl
 		</Supported>
 	</ComplexData>
-</DataInputs>
+
+	[deployTemplate]
+	Title = Cookiecutter Deploy template
+	Abstract = Cookiecutter Deploy template
+	minOccurs = 0
+	maxOccurs = 1
+   	<MetaData>
+    	title = Deploy template
+   	</MetaData>
+   	<LiteralData>
+    	<Default>
+			MimeType = text/html
+     		value = https://git.terradue.com/fbrito/test-runner-template.git
+    	</Default>
+   	</LiteralData>
 
 <DataOutputs>
 	[deployResult]

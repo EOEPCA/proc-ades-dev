@@ -12,7 +12,6 @@ services:
       - ./assets/default.conf:/etc/apache2/sites-available/000-default.conf
       - ./assets/full/scripts/publish.py:/usr/lib/cgi-bin/publish.py
       - ./assets/full/scripts/subscriber.py:/usr/lib/cgi-bin/subscriber.py
-      - ./src/zoo-services/assets/cookiecutter-templates:/usr/lib/cgi-bin/assets/cookiecutter-templates
       - ./src/zoo-services/assets/cookiecutter_config.yaml:/usr/lib/cgi-bin/assets/cookiecutter_config.yaml
       - ./src/zoo-services/services/DeployProcess.py:/usr/lib/cgi-bin/DeployProcess.py
       - ./src/zoo-services/services/DeployProcess.zcfg:/usr/lib/cgi-bin/DeployProcess.zcfg

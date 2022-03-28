@@ -29,7 +29,7 @@ RUN wget \
 ENV PATH="/usr/miniconda3/bin:${PATH}"
 ARG PATH="/usr/miniconda3/bin:${PATH}"
 RUN conda --version
-RUN conda create -n ades-dev python=3.8 workflow-executor=1.0.23 cookiecutter -y -c conda-forge -c eoepca
+RUN conda create -n ades-dev python=3.8 workflow-executor=1.0.23 jinja2 cookiecutter=1.7.2 -y -c conda-forge -c eoepca -c anaconda
 
 
 # Install Docker CE CLI
@@ -91,6 +91,11 @@ COPY assets/default.conf /etc/apache2/sites-available/000-default.conf
 # Remove apt lists
 RUN rm -rf /var/lib/apt/lists/*
 RUN chmod -R 777 /usr/lib/cgi-bin
+
+
+RUN mkdir /tmp/cookiecutter-templates && \
+    chmod -R 777 /tmp/cookiecutter-templates
+
 
 EXPOSE 80
 CMD ["apachectl", "-D", "FOREGROUND"]

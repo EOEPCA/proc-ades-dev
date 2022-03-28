@@ -1,1 +1,2 @@
-replay_dir: "/tmp/"
+replay_dir: "/tmp/cookiecutter-templates/"
+cookiecutters_dir: "/tmp/cookiecutter-templates/"
