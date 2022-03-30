@@ -1,2 +1,4 @@
 src/zoo-services/assets/dump.txt
 .vscode/settings.json
+*.pyc
+__pycache__
