@@ -35,7 +35,7 @@
    	<LiteralData>
     	<Default>
 			MimeType = text/html
-     		value = https://git.terradue.com/fbrito/test-runner-template.git
+     		value = https://github.com/EOEPCA/proc-service-template.git
     	</Default>
    	</LiteralData>
 
@@ -43,16 +43,12 @@
 	[deployResult]
 	Title = Deploy Result
 	Abstract = The server's response to deploying a process. A successful response will contain a summary of the deployed process.
-<ComplexOutput>
-	<Default>
-		encoding = ISO-8859-1
-		MimeType = application/xml
-	</Default>
-	<Supported>
-		encoding = ISO-8859-1
-		MimeType = application/xml
-	</Supported>
-</ComplexOutput>
+	<MetaData>
+    title = Deploy Result
+   </MetaData>
+   <LiteralData>
+    DataType = string
+   </LiteralData>
 </DataOutputs>
 
 

@@ -15,8 +15,6 @@ services:
       - ./src/zoo-services/assets/cookiecutter_config.yaml:/usr/lib/cgi-bin/assets/cookiecutter_config.yaml
       - ./src/zoo-services/services/DeployProcess.py:/usr/lib/cgi-bin/DeployProcess.py
       - ./src/zoo-services/services/DeployProcess.zcfg:/usr/lib/cgi-bin/DeployProcess.zcfg
-      - ./src/zoo-services/assets/AdesService.py:/usr/lib/cgi-bin/AdesService.py
-      - ./src/zoo-services/assets/AdesService.zcfg:/usr/lib/cgi-bin/AdesService.zcfg
       - ./src/zoo-services/assets/echo_service.py:/usr/lib/cgi-bin/echo_service
       - ./src/zoo-services/assets/echo.zcfg:/usr/lib/cgi-bin/echo.zcfg
 

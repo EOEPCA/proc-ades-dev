@@ -105,7 +105,7 @@ def DeployProcess(conf, inputs, outputs):
 
     zooservices_folder = conf["renv"]["CONTEXT_DOCUMENT_ROOT"]
     tmp_folder = conf["main"]["tmpPath"]
-    cookiecutter_templates_folder= "/tmp/cookiecutter-templates"
+    cookiecutter_templates_folder= conf["main"]["cookiecutterTemplatesPath"]
     application_package_url = json.loads(inputs["applicationPackage"]["value"])["href"]
     deploy_template = inputs["deployTemplate"]["value"]
     process_id = conf["lenv"]["usid"]
@@ -147,6 +147,9 @@ def DeployProcess(conf, inputs, outputs):
     # removing service_tmp_folder
     shutil.rmtree(service_tmp_folder)
         
+    outputs["deployResult"]["value"] = (
+        "Service has succesfully been deployed."
+    )
 
     return zoo.SERVICE_SUCCEEDED
 

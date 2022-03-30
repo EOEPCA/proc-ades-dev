@@ -14,3 +14,5 @@ services:
       - ./src/zoo-services/services/DeployProcess.py:/usr/lib/cgi-bin/DeployProcess.py
       - ./src/zoo-services/services/DeployProcess.zcfg:/usr/lib/cgi-bin/DeployProcess.zcfg
       - ./src/zoo-services/services/deploy_util.py:/usr/lib/cgi-bin/deploy_util.py
+      - ./src/zoo-services/assets/HelloPy.zcfg:/usr/lib/cgi-bin/HelloPy.zcfg
+      - ./src/zoo-services/assets/test_service.py:/usr/lib/cgi-bin/test_service.py
