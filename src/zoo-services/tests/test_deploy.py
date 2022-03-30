@@ -18,9 +18,10 @@ except ImportError:
     conf["lenv"] = {"message": ""}
     zoo = ZooStub()
     pass
-
+import os
+from genericpath import exists
 from services.deploy_util import Process
-from services.DeployProcess import DeployService
+from services.DeployProcess import DeployService, DeployProcess
 import shutil
 import unittest
 
@@ -108,7 +109,7 @@ class Tests(unittest.TestCase):
         self.assertEqual("dnbr", deploy_process.service_configuration.identifier)
 
     def test_generate_service(self):
-        
+
         conf["renv"] = {}
         conf["renv"]["CONTEXT_DOCUMENT_ROOT"] = "/tmp"
         conf["cookiecutter"] = {"templatesPath": "", "templateUrl": "https://github.com/EOEPCA/proc-service-template.git"}
@@ -120,9 +121,41 @@ class Tests(unittest.TestCase):
         outputs = {}
         
         deploy_process = DeployService(conf, inputs, outputs)
-        print(deploy_process.service_tmp_folder)
-        print(deploy_process.tmp_folder)
 
-        deploy_process.generate_service()
+        try:
+            deploy_process.generate_service()
+        except:
+            shutil.rmtree("/tmp/DeployProcess-process_id_value")
+            shutil.rmtree(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], "dnbr"))
+
+        self.assertTrue(os.path.isdir(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], deploy_process.service_configuration.identifier)))
+        self.assertTrue(os.path.exists(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], deploy_process.service_configuration.identifier + ".zcfg" )))
+        shutil.rmtree(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], "dnbr"))
+
+    def test_deploy_service(self):
+
+        conf["renv"] = {}
+        conf["renv"]["CONTEXT_DOCUMENT_ROOT"] = "/tmp"
+        conf["cookiecutter"] = {"templatesPath": "", "templateUrl": "https://github.com/EOEPCA/proc-service-template.git"}
+        conf["main"] = {"tmpPath": "/tmp"}
+        conf["lenv"] = {"usid": "process_id_value"}
+        inputs = {}
+        inputs['applicationPackage'] = {"value": '{"href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"}'}
         
-        shutil.rmtree("/tmp/DeployProcess-process_id_value")
+        outputs = {}
+        outputs["deployResult"] = {}
+
+        try:
+            r = DeployProcess(conf, inputs, outputs)
+        except Exception as e:
+            print(e)
+            shutil.rmtree("/tmp/DeployProcess-process_id_value")
+            shutil.rmtree(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], "dnbr"))
+
+        self.assertTrue(os.path.isdir(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], "dnbr")))
+        self.assertTrue(os.path.exists(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], "dnbr.zcfg" )))
+
+        self.assertEquals(r, zoo.SERVICE_SUCCEEDED)
+
+        shutil.rmtree(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], "dnbr"))
+

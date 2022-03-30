@@ -24,21 +24,6 @@
 		</Supported>
 	</ComplexData>
 
-	[deployTemplate]
-	Title = Cookiecutter Deploy template
-	Abstract = Cookiecutter Deploy template
-	minOccurs = 0
-	maxOccurs = 1
-   	<MetaData>
-    	title = Deploy template
-   	</MetaData>
-   	<LiteralData>
-    	<Default>
-			MimeType = text/html
-     		value = https://github.com/EOEPCA/proc-service-template.git
-    	</Default>
-   	</LiteralData>
-
 <DataOutputs>
 	[deployResult]
 	Title = Deploy Result
