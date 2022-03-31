@@ -141,7 +141,6 @@ class DeployService(object):
         elif self.application_package_url.startswith("s3://"):
 
             session = botocore.session.Session()
-            session = botocore.session.Session()
 
             settings = get_s3_settings()
 
