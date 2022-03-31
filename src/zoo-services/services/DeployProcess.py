@@ -61,6 +61,9 @@ class DeployService(object):
 
         self.application_package_url = self.get_application_package_url()
 
+        self.cookiecutter_configuration_file = self._get_conf_value(
+            key="configurationFile", section="cookiecutter"
+        )
         self.cookiecutter_templates_folder = self._get_conf_value(
             key="templatesPath", section="cookiecutter"
         )
@@ -198,7 +201,7 @@ class DeployService(object):
             output_dir=self.service_tmp_folder,
             no_input=True,
             overwrite_if_exists=True,
-            config_file="/tmp/cookiecutter_config.yaml"
+            config_file=self.cookiecutter_configuration_file
         )
 
         zcfg_file = os.path.join(
