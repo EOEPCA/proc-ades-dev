@@ -198,11 +198,19 @@ class DeployService(object):
             output_dir=self.service_tmp_folder,
             no_input=True,
             overwrite_if_exists=True,
+            config_file="/tmp/cookiecutter_config.yaml"
         )
 
         zcfg_file = os.path.join(
             self.zooservices_folder, f"{self.service_configuration.identifier}.zcfg"
         )
+
+        # checking if service had already been deployed previously
+        # if yes, delete it before redeploy the new one
+        old_service = os.path.join(self.zooservices_folder,self.service_configuration.identifier)
+        if os.path.isdir(old_service):
+            shutil.rmtree(old_service)
+            os.remove(zcfg_file)
 
         with open(zcfg_file, "w") as file:
             self.service_configuration.write_zcfg(file)
