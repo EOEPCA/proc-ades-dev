@@ -24,7 +24,7 @@ RUN wget \
 ENV PATH="/usr/miniconda3/bin:${PATH}"
 ARG PATH="/usr/miniconda3/bin:${PATH}"
 RUN conda --version
-RUN conda create -n ades-dev python=3.8 workflow-executor=1.0.23 cookiecutter -y -c conda-forge -c eoepca
+RUN conda create -n ades-dev python=3.8 workflow-executor=1.0.23 cookiecutter boto3 -y -c conda-forge -c eoepca
 
 
 ENV LD_LIBRARY_PATH="/usr/miniconda3/envs/ades-dev/lib:$LD_LIBRARY_PATH"

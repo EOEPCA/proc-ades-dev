@@ -1,6 +1,5 @@
 import os
-from selectors import EpollSelector
-import subprocess
+
 try:
     import zoo
 except ImportError:
@@ -16,6 +15,7 @@ except ImportError:
 
         def _(self, message):
             print(f"invoked _ with {message}")
+
     conf = {}
     conf["lenv"] = {"message": ""}
     zoo = ZooStub()
@@ -30,6 +30,24 @@ import sys
 from .deploy_util import Process
 import yaml
 import requests
+import botocore
+from urllib.parse import urlparse
+from collections import namedtuple
+import os
+
+
+def get_s3_settings():
+    # you can extend this method to get the S3 credentials 
+    return namedtuple(
+        "S3Settings",
+        ["region_name", "endpoint_url", "aws_access_key_id", "aws_secret_access_key"],
+        defaults=[
+            os.getenv("S3_REGION"),
+            os.getenv("SERVICE_URL"),
+            os.getenv("S3_ACCESS_KEY"),
+            os.getenv("S3_SECRET_KEY"),
+        ],
+    )
 
 
 class DeployService(object):
@@ -122,6 +140,28 @@ class DeployService(object):
 
         elif self.application_package_url.startswith("s3://"):
 
+            session = botocore.session.Session()
+            session = botocore.session.Session()
+
+            settings = get_s3_settings()
+
+            s3 = session.create_client(
+                service_name="s3",
+                region_name=settings.region_name,
+                use_ssl=True,
+                endpoint_url=f"https://{settings.endpoint_url}",
+                aws_access_key_id=settings.aws_access_key_id,
+                aws_secret_access_key=settings.aws_secret_access_key,
+            )
+
+            parsed = urlparse(self.application_package_url)
+            bucket = parsed.netloc
+            key = parsed.path[1:]
+
+            cwl_content = (
+                s3.get_object(Bucket=bucket, Key=key)["Body"].read().decode("utf-8")
+            )
+
             raise ValueError("S3 not implemented")
 
         return cwl_content
@@ -181,6 +221,7 @@ class DeployService(object):
         shutil.rmtree(self.service_tmp_folder)
 
         return True
+
 
 def DeployProcess(conf, inputs, outputs):
 

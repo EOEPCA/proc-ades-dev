@@ -1,4 +1,3 @@
-
 try:
     import zoo
 except ImportError:
@@ -14,6 +13,7 @@ except ImportError:
 
         def _(self, message):
             print(f"invoked _ with {message}")
+
     conf = {}
     conf["lenv"] = {"message": ""}
     zoo = ZooStub()
@@ -25,10 +25,10 @@ from services.DeployProcess import DeployService, DeployProcess
 import shutil
 import unittest
 
+
 class Tests(unittest.TestCase):
-    
     def test_empty_conf(self):
-        
+
         conf = {}
         inputs = {}
         outputs = {}
@@ -42,8 +42,10 @@ class Tests(unittest.TestCase):
         conf["renv"] = {}
         conf["renv"]["CONTEXT_DOCUMENT_ROOT"] = "/usr/lib/cgi-bin/"
         inputs = {}
-        inputs['applicationPackage'] = "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"
-        
+        inputs[
+            "applicationPackage"
+        ] = "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"
+
         outputs = {}
 
         try:
@@ -59,8 +61,10 @@ class Tests(unittest.TestCase):
         conf["main"] = {"tmpPath": "/tmp"}
         conf["lenv"] = {"usid": "process_id_value"}
         inputs = {}
-        inputs['applicationPackage'] = {"value": '{"href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"}'}
-        
+        inputs["applicationPackage"] = {
+            "value": '{"href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"}'
+        }
+
         outputs = {}
 
         deploy_process = DeployService(conf, inputs, outputs)
@@ -77,8 +81,10 @@ class Tests(unittest.TestCase):
         conf["main"] = {"tmpPath": "/tmp"}
         conf["lenv"] = {"usid": "process_id_value"}
         inputs = {}
-        inputs['applicationPackage'] = {"value": '{"href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"}'}
-        
+        inputs["applicationPackage"] = {
+            "value": '{"href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"}'
+        }
+
         outputs = {}
 
         deploy_process = DeployService(conf, inputs, outputs)
@@ -89,7 +95,6 @@ class Tests(unittest.TestCase):
 
         self.assertTrue(isinstance(cwl_content, dict))
 
-
     def test_cwl_identifier(self):
 
         conf["renv"] = {}
@@ -98,8 +103,10 @@ class Tests(unittest.TestCase):
         conf["main"] = {"tmpPath": "/tmp"}
         conf["lenv"] = {"usid": "process_id_value"}
         inputs = {}
-        inputs['applicationPackage'] = {"value": '{"href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"}'}
-        
+        inputs["applicationPackage"] = {
+            "value": '{"href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"}'
+        }
+
         outputs = {}
 
         deploy_process = DeployService(conf, inputs, outputs)
@@ -112,14 +119,19 @@ class Tests(unittest.TestCase):
 
         conf["renv"] = {}
         conf["renv"]["CONTEXT_DOCUMENT_ROOT"] = "/tmp"
-        conf["cookiecutter"] = {"templatesPath": "", "templateUrl": "https://github.com/EOEPCA/proc-service-template.git"}
+        conf["cookiecutter"] = {
+            "templatesPath": "",
+            "templateUrl": "https://github.com/EOEPCA/proc-service-template.git",
+        }
         conf["main"] = {"tmpPath": "/tmp"}
         conf["lenv"] = {"usid": "process_id_value"}
         inputs = {}
-        inputs['applicationPackage'] = {"value": '{"href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"}'}
-        
+        inputs["applicationPackage"] = {
+            "value": '{"href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"}'
+        }
+
         outputs = {}
-        
+
         deploy_process = DeployService(conf, inputs, outputs)
 
         try:
@@ -128,20 +140,39 @@ class Tests(unittest.TestCase):
             shutil.rmtree("/tmp/DeployProcess-process_id_value")
             shutil.rmtree(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], "dnbr"))
 
-        self.assertTrue(os.path.isdir(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], deploy_process.service_configuration.identifier)))
-        self.assertTrue(os.path.exists(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], deploy_process.service_configuration.identifier + ".zcfg" )))
+        self.assertTrue(
+            os.path.isdir(
+                os.path.join(
+                    conf["renv"]["CONTEXT_DOCUMENT_ROOT"],
+                    deploy_process.service_configuration.identifier,
+                )
+            )
+        )
+        self.assertTrue(
+            os.path.exists(
+                os.path.join(
+                    conf["renv"]["CONTEXT_DOCUMENT_ROOT"],
+                    deploy_process.service_configuration.identifier + ".zcfg",
+                )
+            )
+        )
         shutil.rmtree(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], "dnbr"))
 
     def test_deploy_service(self):
 
         conf["renv"] = {}
         conf["renv"]["CONTEXT_DOCUMENT_ROOT"] = "/tmp"
-        conf["cookiecutter"] = {"templatesPath": "", "templateUrl": "https://github.com/EOEPCA/proc-service-template.git"}
+        conf["cookiecutter"] = {
+            "templatesPath": "",
+            "templateUrl": "https://github.com/EOEPCA/proc-service-template.git",
+        }
         conf["main"] = {"tmpPath": "/tmp"}
         conf["lenv"] = {"usid": "process_id_value"}
         inputs = {}
-        inputs['applicationPackage'] = {"value": '{"href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"}'}
-        
+        inputs["applicationPackage"] = {
+            "value": '{"href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"}'
+        }
+
         outputs = {}
         outputs["deployResult"] = {}
 
@@ -152,10 +183,15 @@ class Tests(unittest.TestCase):
             shutil.rmtree("/tmp/DeployProcess-process_id_value")
             shutil.rmtree(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], "dnbr"))
 
-        self.assertTrue(os.path.isdir(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], "dnbr")))
-        self.assertTrue(os.path.exists(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], "dnbr.zcfg" )))
+        self.assertTrue(
+            os.path.isdir(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], "dnbr"))
+        )
+        self.assertTrue(
+            os.path.exists(
+                os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], "dnbr.zcfg")
+            )
+        )
 
         self.assertEquals(r, zoo.SERVICE_SUCCEEDED)
 
         shutil.rmtree(os.path.join(conf["renv"]["CONTEXT_DOCUMENT_ROOT"], "dnbr"))
-

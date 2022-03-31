@@ -29,7 +29,7 @@ RUN wget \
 ENV PATH="/usr/miniconda3/bin:${PATH}"
 ARG PATH="/usr/miniconda3/bin:${PATH}"
 RUN conda --version
-RUN conda create -n ades-dev python=3.8 workflow-executor=1.0.23 jinja2 cookiecutter=1.7.2 -y -c conda-forge -c eoepca -c anaconda
+RUN conda create -n ades-dev python=3.8 workflow-executor=1.0.23 jinja2 cookiecutter=1.7.2 -y -c conda-forge -c eoepca -c anaconda boto3
 
 
 # Install Docker CE CLI
