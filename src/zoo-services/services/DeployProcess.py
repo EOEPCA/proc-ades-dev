@@ -27,7 +27,7 @@ import shutil
 import json
 from pathlib import Path
 import sys
-from .deploy_util import Process
+from deploy_util import Process
 import yaml
 import requests
 import botocore

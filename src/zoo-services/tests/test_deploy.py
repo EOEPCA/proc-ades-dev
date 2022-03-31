@@ -20,8 +20,10 @@ except ImportError:
     pass
 import os
 from genericpath import exists
-from services.deploy_util import Process
-from services.DeployProcess import DeployService, DeployProcess
+
+import sys
+sys.path.insert(0, os.path.abspath('./services'))
+from DeployProcess import DeployService, DeployProcess
 import shutil
 import unittest
 
