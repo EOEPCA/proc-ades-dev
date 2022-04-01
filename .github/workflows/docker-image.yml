@@ -16,6 +16,6 @@ jobs:
       - name: Build Dockerfile
         run: docker-compose build --no-cache
       - name: Run the Ades with docker-compose
-        run: docker-compose up
+        run: docker-compose up -d
       - name: List Services
         run: curl http://localhost/ogc-api/processes | jq
