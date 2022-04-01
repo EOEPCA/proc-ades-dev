@@ -1,0 +1,21 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: sergeysova/jq-action@v2
+      - name: Build Dockerfile
+        run: docker-compose build --no-cache
+      - name: Run the Ades with docker-compose
+        run: docker-compose up
+      - name: List Services
+        run: curl http://localhost/ogc-api/processes | jq
