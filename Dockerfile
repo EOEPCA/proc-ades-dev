@@ -29,7 +29,7 @@ RUN wget \
 ENV PATH="/usr/miniconda3/bin:${PATH}"
 ARG PATH="/usr/miniconda3/bin:${PATH}"
 RUN conda --version
-RUN conda create -n ades-dev python=3.8 workflow-executor=1.0.23 jinja2 cookiecutter=1.7.2 -y -c conda-forge -c eoepca -c anaconda
+RUN conda create -n ades-dev python=3.8 workflow-executor=1.0.23 jinja2 cookiecutter=1.7.2 boto3 -y -c conda-forge -c eoepca -c anaconda 
 
 
 # Install Docker CE CLI
@@ -69,7 +69,7 @@ WORKDIR /opt/ZOO-Project
 RUN make -C ./thirds/cgic206 libcgic.a
 RUN cd ./zoo-project/zoo-kernel \
      && autoconf \
-     && ./configure --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=3.8 --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr --with-db-backend \
+     && ./configure --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=3.8 --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr \
      && sed -i "s/-DACCEPT_USE_OF_DEPRECATED_PROJ_API_H/-DPROJ_VERSION_MAJOR=8/g" ./ZOOMakefile.opts \
      && make -j4\
      && make install \
