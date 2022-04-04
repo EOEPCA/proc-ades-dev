@@ -239,8 +239,10 @@ def DeployProcess(conf, inputs, outputs):
 
     deploy_process.generate_service()
 
-    outputs["deployResult"][
-        "value"
-    ] = f"Service {deploy_process.service_configuration.identifier} version {deploy_process.service_configuration.version} successfully deployed."
-
+    response_json ={
+        "message":f"Service {deploy_process.service_configuration.identifier} version {deploy_process.service_configuration.version} successfully deployed.",
+        "service": deploy_process.service_configuration.identifier,
+        "status": "success"
+    }
+    outputs["deployResult"]["value"]=json.dumps(response_json)
     return zoo.SERVICE_SUCCEEDED

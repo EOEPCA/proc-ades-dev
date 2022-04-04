@@ -28,12 +28,10 @@
 	[deployResult]
 	Title = Deploy Result
 	Abstract = The server's response to deploying a process. A successful response will contain a summary of the deployed process.
-	<MetaData>
-    title = Deploy Result
-   </MetaData>
-   <LiteralData>
-    DataType = string
-   </LiteralData>
+   <ComplexData>
+    mimeType = application/json
+	encoding = UTF-8
+   </ComplexData>
 </DataOutputs>
 
 
