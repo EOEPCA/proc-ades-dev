@@ -2,7 +2,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/EOEPCA/proc-ades">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="https://raw.githubusercontent.com/EOEPCA/proc-ades/master/images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">ADES building block</h3>
@@ -26,16 +26,11 @@
 - [Table of Contents](#table-of-contents)
 - [About The Project](#about-the-project)
 - [Getting Started & Usage](#getting-started--usage)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-- [Acknowledgements](#acknowledgements)
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://github.com/EOEPCA/)
+[![Product Name Screen Shot][https://raw.githubusercontent.com/EOEPCA/proc-ades/master/images/screenshot.png]](https://github.com/EOEPCA/)
 
 The Processing & Chaining domain area provides an extensible repository of processing functions, tools and applications that can be discovered by search query, invoked individually, and utilised in workflows. ADES is responsible for the execution of the processing service through both a [OGC WPS 1.0 & 2.0 OWS service](https://www.ogc.org/standards/wps) and an [OGC Processes REST API](https://github.com/opengeospatial/wps-rest-binding). The processing request are executed within the target Exploitation Platform (i.e., the one that is close to the data).
 
@@ -46,7 +41,15 @@ The ADES functions are designed to perform the processing and chaining function 
 <!-- GETTING STARTED -->
 ## Getting Started & Usage
 
-The various containers making up the ADES architecture are launched using the following command (which may take a while when run for the first time):
+The various containers making up the ADES architecture are built and launched using the following commands (this will take a while when done for the first time):
+
+```bash
+# Change into the correct directory
+cd ZOO-Project
+
+# Builds and launches the multi-container Docker application for ADES
+docker compose up
+```
 
 ### Run the ADES Container
 
@@ -68,7 +71,7 @@ To deploy a new process, send an execution request to the DeployProcess OGC API 
 curl --location --request POST 'http://localhost/ogc-api/processes/DeployProcess' \
 --header 'Accept: application/json' \
 --header 'Content-Type: application/json' \
---data-raw ''{
+--data-raw '{
   "inputs": [
     {
       "id": "applicationPackage",
@@ -95,7 +98,7 @@ curl --location --request POST 'http://localhost/ogc-api/processes/DeployProcess
   ],
   "mode": "async",
   "response": "raw"
-}''
+}'
 ```
 
 
@@ -155,5 +158,5 @@ TOTAL                                                                    118    
 
 ### Tests in GitHub Actions
 
-The file GitHub workflow file [docker-image.yml](.github/workflows/docker-image.yml) defines a series of actions for testing purposes that are performed server-side at every `git push` operations.
+The file GitHub workflow file [docker-image.yml](.github/workflows/docker-image.yml) defines a series of actions for testing purposes that are performed server-side at every `git push` operation.
 
