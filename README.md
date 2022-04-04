@@ -44,10 +44,11 @@ The ADES functions are designed to perform the processing and chaining function 
 The various containers making up the ADES architecture are built and launched using the following commands (this will take a while when done for the first time):
 
 ```bash
-# Change into the correct directory
-cd ZOO-Project
+# Clone the project and open the folder
+git clone https://github.com/EOEPCA/proc-ades-dev.git
+cd proc-ades-dev
 
-# Builds and launches the multi-container Docker application for ADES
+# Build and launch the multi-container Docker application for ADES
 docker compose up
 ```
 
@@ -76,36 +77,34 @@ To deploy a new process, send an execution request to the DeployProcess OGC API 
 
 ```bash
 curl --location --request POST 'http://localhost/ogc-api/processes/DeployProcess' \
---header 'Accept: application/json' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-  "inputs": [
-    {
-      "id": "applicationPackage",
-      "input": {
-        "format": {
-          "mimeType": "application/cwl"
-        }, 
-        "value": {
-          "href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"
+    "inputs": {
+        "applicationPackage": {
+            "mimeType": "application/cwl",
+            "value": {
+                "href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"
+            }
         }
-      }
+    },
+    "outputs": {
+        "deployResult": {
+            "format": {
+                "mediaType": "application/json"
+            },
+            "transmissionMode": "reference"
+        }
     }
-  ],
-  "outputs": [
-    {
-      "format": {
-        "mimeType": "string",
-        "schema": "string",
-        "encoding": "string"
-      },
-      "id": "deployResult",
-      "transmissionMode": "value"
-    }
-  ],
-  "mode": "async",
-  "response": "raw"
 }'
+```
+The ouput should look like this:
+
+```bash
+{
+    "message": "Service dnbr version 0.1.0 successfully deployed.",
+    "service": "dnbr",
+    "status": "success"
+}
 ```
 
 
@@ -115,9 +114,30 @@ To undeploy an existing process, send an execution request to the UndeployProces
 
 ```bash
 curl --location --request POST 'http://localhost/ogc-api/processes/UndeployProcess' \
---header 'Accept: application/json' \
 --header 'Content-Type: application/json' \
---data-raw 'TBD'
+--data-raw '{
+    "inputs": {
+        "applicationPackageIdentifier": "dnbr" 
+    },
+    "outputs": {
+        "undeployResult": {
+            "format": {
+                "mediaType": "application/json"
+            },
+            "transmissionMode": "reference"
+        }
+    }
+}'
+```
+
+The ouput should look like this:
+
+```bash
+{
+    "message": "Service dnbr successfully undeployed.",
+    "service": "dnbr",
+    "status": "success"
+}
 ```
 
 <!-- DEVELOPER NOTES -->
