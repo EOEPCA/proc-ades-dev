@@ -58,7 +58,14 @@ The various containers making up the ADES architecture are launched using the fo
 
 ### List Processes
 
-To see all deployed processes, query at the OGC API `/processes` endpoint (using a web browser):
+To see a list of deployed processes, you can query them the OGC API `/processes` endpoint:
+
+```bash
+curl --location --request GET 'http://localhost/ogc-api/processes' \
+--header 'Accept: application/json'
+```
+
+As it is a simple GET request, you can see the same content using a web browser too:
 
 http://localhost/ogc-api/processes/
 
@@ -131,9 +138,6 @@ The following sections assume that the Docker container is used (see previous se
 Unit tests are defined in [this folder](src/zoo-services/tests/). They can be run with the following commands:
 
 ```bash
-# Activate the proper conda environment
-conda activate ades-dev
-
 # Change into the local copy of the folder containing the tests:
 cd src/zoo-services/tests/
 

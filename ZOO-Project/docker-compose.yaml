@@ -17,8 +17,6 @@ services:
       - ./docker/.htaccess:/var/www/html/.htaccess
       - ./zoo-project/zoo-services/utils/open-api/templates/index.html:/var/www/index.html
       - ./zoo-project/zoo-services/utils/open-api/static:/var/www/html/static
-      - ../src/zoo-services/assets/AdesService.py:/tmp/t2services/AdesService.py
-      - ../src/zoo-services/assets/AdesService.zcfg:/tmp/t2services/AdesService.zcfg
       - ../src/zoo-services/services/DeployProcess.py:/usr/lib/cgi-bin/DeployProcess.py
       - ../src/zoo-services/services/DeployProcess.zcfg:/usr/lib/cgi-bin/DeployProcess.zcfg
       - ../src/zoo-services/assets:/usr/lib/cgi-bin/assets   

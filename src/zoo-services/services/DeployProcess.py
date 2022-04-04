@@ -3,7 +3,7 @@ import os
 try:
     import zoo
 except ImportError:
-    print("Not running in zoo instance")
+    print("Not running in zoo instance, using ZooStub object for testing")
 
     class ZooStub(object):
         def __init__(self):
