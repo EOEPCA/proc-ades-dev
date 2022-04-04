@@ -30,7 +30,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][https://raw.githubusercontent.com/EOEPCA/proc-ades/master/images/screenshot.png]](https://github.com/EOEPCA/)
+[![Product Name Screen Shot](https://raw.githubusercontent.com/EOEPCA/proc-ades/master/images/screenshot.png)](https://github.com/EOEPCA/)
 
 The Processing & Chaining domain area provides an extensible repository of processing functions, tools and applications that can be discovered by search query, invoked individually, and utilised in workflows. ADES is responsible for the execution of the processing service through both a [OGC WPS 1.0 & 2.0 OWS service](https://www.ogc.org/standards/wps) and an [OGC Processes REST API](https://github.com/opengeospatial/wps-rest-binding). The processing request are executed within the target Exploitation Platform (i.e., the one that is close to the data).
 
