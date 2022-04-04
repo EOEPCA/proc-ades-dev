@@ -7,7 +7,17 @@
 		"context": "..",
 	},
 	// Set *default* container specific settings.json values on container create.
-	"settings": {},
+	"settings": {
+		"python.testing.unittestArgs": [
+			"-v",
+			"-s",
+			"./src/zoo-services/tests/",
+			"-p",
+			"test_*.py"
+		],
+		"python.testing.unittestEnabled": true,
+		"python.defaultInterpreterPath": "/usr/miniconda3/envs/ades-dev/bin/python",
+	},
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"ms-vscode.cpptools",
