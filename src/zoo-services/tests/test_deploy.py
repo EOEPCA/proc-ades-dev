@@ -23,8 +23,9 @@ except ImportError:
 import os
 from genericpath import exists
 import sys
-
-sys.path.insert(0, os.path.abspath("./services"))
+from pathlib import Path
+services_dir = os.path.join(Path(os.path.abspath(os.path.dirname(__file__))).parent,"services")
+sys.path.insert(0, services_dir)
 from DeployProcess import DeployService, DeployProcess
 import shutil
 import unittest
@@ -176,3 +177,7 @@ class Tests(unittest.TestCase):
             True,
         )
         self.assertEqual(r, zoo.SERVICE_SUCCEEDED)
+
+
+if __name__ == '__main__':
+    unittest.main()
