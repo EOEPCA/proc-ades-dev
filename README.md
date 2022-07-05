@@ -49,7 +49,7 @@ git clone https://github.com/EOEPCA/proc-ades-dev.git
 cd proc-ades-dev
 
 # Build and launch the multi-container Docker application for ADES
-docker compose up
+docker-compose up
 ```
 
 ### Run the ADES Container
