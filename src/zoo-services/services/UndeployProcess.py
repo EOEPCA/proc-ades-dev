@@ -1,7 +1,7 @@
 import os
 import shutil
 import json
-
+import sys
 
 try:
     import zoo
@@ -32,7 +32,7 @@ class UndeployService(object):
         self.inputs = inputs
         self.outputs = outputs
         self.zooservices_folder = self.get_zoo_services_folder()
-        self.service_identifier = self.get_application_package_identifier()
+        self.service_identifier = self.get_process_identifier()
 
 
     def _get_conf_value(self, key, section="main"):
@@ -43,19 +43,27 @@ class UndeployService(object):
             raise ValueError(f"{key} not set, check configuration")
 
     def get_zoo_services_folder(self):
-        zooservices_folder = self._get_conf_value(
-            key="CONTEXT_DOCUMENT_ROOT", section="renv"
-        )
+        # checking for namespace
+        if "zooServicesNamespace" in self.conf and \
+                "namespace" in self.conf["zooServicesNamespace"] and \
+                "servicesNamespace" in self.conf and \
+                "path" in self.conf["servicesNamespace"]:
+            zooservices_folder = os.path.join(self.conf["servicesNamespace"]["path"],
+                                              self.conf["zooServicesNamespace"]["namespace"])
+        else:
+            zooservices_folder = self._get_conf_value(
+                key="CONTEXT_DOCUMENT_ROOT", section="renv"
+            )
         return zooservices_folder
 
 
-    def get_application_package_identifier(self):
+    def get_process_identifier(self):
 
-        if "applicationPackageIdentifier" not in self.inputs.keys():
-            raise ValueError("The inputs dot not include the applicationPackageIdentifier")
+        if "REQUEST_URI" not in self.conf["renv"].keys():
+            raise ValueError("REQUEST_URI is missing")
 
-        applicationPackageIdentifier = self.inputs["applicationPackageIdentifier"]["value"]
-        return applicationPackageIdentifier
+        process_identifier = self.conf["renv"]["REQUEST_URI"].split('/')[-1]
+        return process_identifier
 
 
 
@@ -77,12 +85,5 @@ def UndeployProcess(conf, inputs, outputs):
 
     undeploy_process.remove_service()
 
-    response_json ={
-        "message":f"Service {undeploy_process.service_identifier} successfully undeployed.",
-        "service":undeploy_process.service_identifier,
-        "status": "success"
-    }
-
-    outputs["undeployResult"]["value"]=json.dumps(response_json)
-
-    return zoo.SERVICE_SUCCEEDED
+    return 7
+    #return zoo.SERVICE_SUCCEEDED

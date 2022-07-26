@@ -1,38 +1,45 @@
 [DeployProcess]
-	Title = Deploy Process
-	Abstract = This method will deploy an application package to create a process accessible through a WPS interface.
-	processVersion = 1.0.0
-	storeSupported = true
-	statusSupported = true
-	serviceType = Python
-	serviceProvider = DeployProcess
-<DataInputs>
-	[applicationPackage]
-	Title = Application Package
-	Abstract = An application package, encoded as an ATOM-encoded OGC context document, describing the details of the application.
-	minOccurs = 1
-	maxOccurs = 1
-	<ComplexData>
-		<Default>
-			mimeType = application/atom+xml
-		</Default>
-		<Supported>
-			MimeType = application/atom+xml
-		</Supported>
-		<Supported>
-			MimeType = application/cwl
-		</Supported>
-	</ComplexData>
-
-<DataOutputs>
-	[deployResult]
-	Title = Deploy Result
-	Abstract = The server's response to deploying a process. A successful response will contain a summary of the deployed process.
+ Title = Deploys a zoo service from an application package.
+ Abstract = Deploys a zoo service from an application package.
+ processVersion = 2
+ storeSupported = true
+ statusSupported = true
+ serviceProvider = DeployProcess
+ serviceType = Python
+ <MetaData>
+   title = Service Deploy
+ </MetaData>
+ <DataInputs>
+  [applicationPackage]
+   Title = Input string
+   Abstract = The application package to deploy.
+   minOccurs = 1
+   maxOccurs = 1
+   <MetaData>
+    title = My test
+   </MetaData>
    <ComplexData>
-    mimeType = application/json
-	encoding = UTF-8
+        <Default>
+            MimeType = application/cwl
+        </Default>
+        <Supported>
+            MimeType = application/cwl
+        </Supported>
    </ComplexData>
-</DataOutputs>
+ </DataInputs>
+ <DataOutputs>
+  [Result]
+   Title = Message to display
+   Abstract = The message displayed when the service has been deployed.
+   minOccurs = 0
+   maxOccurs = 1
+   <MetaData>
+    title = Deploy response message
+   </MetaData>
+   <LiteralData>
+    DataType = string
+   </LiteralData>
+ </DataOutputs>
 
 
 
