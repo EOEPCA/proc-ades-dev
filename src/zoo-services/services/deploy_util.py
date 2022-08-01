@@ -90,10 +90,10 @@ class Process:
             raise Exception("Workflow '{0}' has no inputs".format(workflow["id"]))
 
         process = Process(
-            workflow["id"],
-            version,
-            workflow["label"] if "label" in workflow else None,
-            workflow["doc"] if "doc" in workflow else None,
+            identifier=workflow["id"],
+            version=version,
+            title=workflow["label"] if "label" in workflow else None,
+            description=workflow["doc"] if "doc" in workflow else None,
         )
 
         process.add_inputs_from_cwl(workflow["inputs"])
@@ -114,8 +114,9 @@ class Process:
         """
         Adds a process output from a CWL input representation.
         """
-
+        print(str(outputs),file=sys.stderr)
         for output_id, output in outputs.items():
+            print(f"output_id: {output_id}\n output: {output}",file=sys.stderr)
             process_output = ProcessOutput.create_from_cwl(str(output_id), output)
             self.outputs.append(process_output)
 

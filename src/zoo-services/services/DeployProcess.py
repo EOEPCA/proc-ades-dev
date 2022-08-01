@@ -201,6 +201,8 @@ class DeployService(object):
 
         shutil.rmtree(self.service_tmp_folder)
 
+        self.conf["lenv"]["deployedServiceId"] = self.service_configuration.identifier
+
         return True
 
 
