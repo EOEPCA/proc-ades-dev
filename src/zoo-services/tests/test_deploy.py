@@ -82,10 +82,14 @@ class Tests(unittest.TestCase):
         self.conf["lenv"] = {
             "usid": "".join(random.choice(string.digits) for i in range(10))
         }
+
+        # load application package from file
+        cwl_file = open("dnbr.cwl", "r")
+        cwl_data = cwl_file.read()
+        cwl_file.close()
+
         self.inputs = {}
-        self.inputs["applicationPackage"] = {
-            "value": '{"href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"}'
-        }
+        self.inputs["applicationPackage"] = {"value": cwl_data}
 
         self.outputs = {}
         self.outputs["deployResult"] = {}

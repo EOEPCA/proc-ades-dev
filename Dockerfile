@@ -64,7 +64,7 @@ RUN apt install -y apache2 libapache2-mod-fcgid wget \
 
 ########################################
 # ZOO_KERNEL
-RUN cd /opt && git clone https://github.com/ZOO-Project/ZOO-Project.git
+RUN cd /opt && git clone https://github.com/terradue/ZOO-Project.git -b feature/deploy-undeploy-ogcapi-route
 WORKDIR /opt/ZOO-Project
 RUN make -C ./thirds/cgic206 libcgic.a
 RUN cd ./zoo-project/zoo-kernel \

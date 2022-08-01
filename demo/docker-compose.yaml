@@ -1,0 +1,21 @@
+version: '3'
+services:
+  zookernel:
+    platform: linux/amd64
+    image: adesdemo:latest
+    build: .
+    ports:
+      - "80:80"
+      - "8888:8888"
+    volumes:
+      - ../assets/classic/main.cfg:/usr/lib/cgi-bin/main.cfg
+      - ../assets/classic/oas.cfg:/usr/lib/cgi-bin/oas.cfg
+      - ../src/zoo-services/assets/cookiecutter_config.yaml:/tmp/cookiecutter_config.yaml
+      - ../src/zoo-services/services/DeployProcess.py:/usr/lib/cgi-bin/DeployProcess.py
+      - ../src/zoo-services/services/DeployProcess.zcfg:/usr/lib/cgi-bin/DeployProcess.zcfg
+      - ../src/zoo-services/services/UndeployProcess.py:/usr/lib/cgi-bin/UndeployProcess.py
+      - ../src/zoo-services/services/UndeployProcess.zcfg:/usr/lib/cgi-bin/UndeployProcess.zcfg
+      - ../src/zoo-services/services/deploy_util.py:/usr/lib/cgi-bin/deploy_util.py
+      - ../src/zoo-services/assets/HelloPy.zcfg:/usr/lib/cgi-bin/HelloPy.zcfg
+      - ../src/zoo-services/assets/test_service.py:/usr/lib/cgi-bin/test_service.py
+      - ./notebooks/:/notebooks

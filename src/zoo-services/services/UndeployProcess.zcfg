@@ -7,7 +7,7 @@
 	serviceType = Python
 	serviceProvider = UndeployProcess
 <DataInputs>
-	[applicationPackageIdentifier]
+	[applicationPackage]
 	Title = Service Identifier
 	Abstract = Id of the service to remove 
 	minOccurs = 1
@@ -18,7 +18,7 @@
  </DataInputs>
 
 <DataOutputs>
-	[undeployResult]
+	[Result]
 	Title = UnDeploy Result
 	Abstract = The server's response to undeploying a process. A successful response will contain a summary of the removed process.
    <ComplexData>

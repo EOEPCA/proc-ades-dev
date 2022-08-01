@@ -59,8 +59,6 @@ class DeployService(object):
 
         self.zooservices_folder = self.get_zoo_services_folder()
 
-        self.application_package_url = self.get_application_package_url()
-
         self.cookiecutter_configuration_file = self._get_conf_value(
             key="configurationFile", section="cookiecutter"
         )
@@ -86,28 +84,27 @@ class DeployService(object):
         )
         self.service_configuration.service_type = "Python"
 
+        self.conf["lenv"]["workflow_id"] = self.service_configuration.identifier
+
     def get_zoo_services_folder(self):
 
-        zooservices_folder = self._get_conf_value(
-            key="CONTEXT_DOCUMENT_ROOT", section="renv"
-        )
+        # checking for namespace
+        if "zooServicesNamespace" in self.conf and \
+                "namespace" in self.conf["zooServicesNamespace"] and \
+                "servicesNamespace" in self.conf and \
+                "path" in self.conf["servicesNamespace"]:
+            zooservices_folder = os.path.join(self.conf["servicesNamespace"]["path"],
+                                              self.conf["zooServicesNamespace"]["namespace"])
+        else:
+        # if no namespace is used, we will use the default services path
+            zooservices_folder = self._get_conf_value(
+                key="CONTEXT_DOCUMENT_ROOT", section="renv"
+            )
 
         # Checking if zoo can write in the servicePath
         self.check_write_permissions(zooservices_folder)
 
         return zooservices_folder
-
-    def get_application_package_url(self):
-
-        if "applicationPackage" not in self.inputs.keys():
-            raise ValueError("The inputs dot not include applicationPackage")
-
-        input_value = json.loads(self.inputs["applicationPackage"]["value"])
-
-        if "href" in input_value.keys():
-            return input_value["href"]
-        else:
-            return input_value
 
     def _get_conf_value(self, key, section="main"):
 
@@ -133,38 +130,12 @@ class DeployService(object):
 
     def get_application_package(self):
 
-        cwl_content = None
+        # checking if applicationPackage exists
+        if "applicationPackage" not in self.inputs.keys():
+            raise ValueError("The inputs dot not include applicationPackage")
 
-        if self.application_package_url.startswith("http"):
-
-            r = requests.get(self.application_package_url)
-
-            cwl_content = yaml.safe_load(r.content)
-
-        elif self.application_package_url.startswith("s3://"):
-
-            session = botocore.session.Session()
-
-            settings = get_s3_settings()
-
-            s3 = session.create_client(
-                service_name="s3",
-                region_name=settings.region_name,
-                use_ssl=True,
-                endpoint_url=f"https://{settings.endpoint_url}",
-                aws_access_key_id=settings.aws_access_key_id,
-                aws_secret_access_key=settings.aws_secret_access_key,
-            )
-
-            parsed = urlparse(self.application_package_url)
-            bucket = parsed.netloc
-            key = parsed.path[1:]
-
-            cwl_content = (
-                s3.get_object(Bucket=bucket, Key=key)["Body"].read().decode("utf-8")
-            )
-
-            raise ValueError("S3 not implemented")
+        # loading cwl in yaml object
+        cwl_content = yaml.safe_load(self.inputs["applicationPackage"]["value"])
 
         return cwl_content
 
@@ -220,7 +191,7 @@ class DeployService(object):
 
         app_package_file = os.path.join(
             path,
-            f"{self.service_configuration.identifier}_{self.service_configuration.version}.cwl",
+            f"app-package.cwl",
         )
 
         with open(app_package_file, "w") as file:
@@ -229,6 +200,8 @@ class DeployService(object):
         shutil.move(path, self.zooservices_folder)
 
         shutil.rmtree(self.service_tmp_folder)
+
+        self.conf["lenv"]["deployedServiceId"] = self.service_configuration.identifier
 
         return True
 
@@ -240,9 +213,10 @@ def DeployProcess(conf, inputs, outputs):
     deploy_process.generate_service()
 
     response_json ={
-        "message":f"Service {deploy_process.service_configuration.identifier} version {deploy_process.service_configuration.version} successfully deployed.",
+        "message": f"Service {deploy_process.service_configuration.identifier} version {deploy_process.service_configuration.version} successfully deployed.",
         "service": deploy_process.service_configuration.identifier,
         "status": "success"
     }
-    outputs["deployResult"]["value"]=json.dumps(response_json)
-    return zoo.SERVICE_SUCCEEDED
+    outputs["Result"]["value"]=json.dumps(response_json)
+    return 6
+    #return zoo.SERVICE_SUCCEEDED
