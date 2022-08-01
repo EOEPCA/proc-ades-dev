@@ -3,3 +3,12 @@ src/zoo-services/assets/dump.txt
 *.pyc
 __pycache__
 *.coverage
+.idea
+
+### JupyterNotebooks ###
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# IPython
+profile_default/
+ipython_config.py
