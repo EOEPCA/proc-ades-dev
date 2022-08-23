@@ -1,0 +1,76 @@
+rulez:
+  version: 1
+
+parser:
+  type: $graph
+  driver: cwl
+
+onstage:
+  driver: cwl
+
+  stage_in:
+    connection_node: node_stage_in
+    if_scatter:
+      scatterMethod: dotproduct
+    input:
+      template:
+        overwrite: True
+
+  on_stage:
+    connection_node: on_stage
+
+  stage_out:
+    connection_node: node_stage_out
+    scatter: False
+    if_scatter:
+      scatterMethod: dotproduct
+    follow_node: node_metrics_out
+
+
+output:
+  driver: cwl
+  name: '-'
+  type: $graph
+
+
+cwl:
+  GlobalInput:
+    Directory: string
+    Directory[]: string[]
+
+  OptionalInput:
+    Directory: string?
+    Directory[]: string[]?
+
+  stage_in:
+    Directory:
+      type: string
+      inputBinding:
+        position: 2
+
+    Directory[]:
+      type: string[]
+      inputBinding:
+        position: 2
+
+  stage_out:
+    Directory:
+      type: Directory
+
+    Directory[]:
+      type: Directory[]
+
+  outputBindingResult:
+    command:
+      Directory:
+        outputBinding:
+          glob: .
+        type: Directory
+      Directory[]:
+        outputBinding:
+          glob: .
+        type: Directory[]
+    stepOut:
+      type:
+        items: Directory
+        type: array

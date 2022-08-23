@@ -11,6 +11,8 @@ dependencies:
   - boto3
   - pycalrissian
   - zoo-calrissian-runner=0.1.3
+  - python-kubernetes
+  - cwl-wrapper=0.10.1
   - pip
   - pip:
     - cwl_utils

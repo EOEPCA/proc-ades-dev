@@ -9,6 +9,8 @@ services:
     volumes:
       - ./assets/main.cfg:/usr/lib/cgi-bin/main.cfg
       - ./assets/oas.cfg:/usr/lib/cgi-bin/oas.cfg
+      - ./assets/.htaccess:/var/www/html/.htaccess
+      - ./assets/cwlwrapper-assets:/assets
       - ./src/zoo-services/assets/cookiecutter_config.yaml:/tmp/cookiecutter_config.yaml
       - ./src/zoo-services/services/DeployProcess.py:/usr/lib/cgi-bin/DeployProcess.py
       - ./src/zoo-services/services/DeployProcess.zcfg:/usr/lib/cgi-bin/DeployProcess.zcfg
@@ -17,11 +19,13 @@ services:
       - ./src/zoo-services/services/deploy_util.py:/usr/lib/cgi-bin/deploy_util.py
       - ./src/zoo-services/assets/HelloPy.zcfg:/usr/lib/cgi-bin/HelloPy.zcfg
       - ./src/zoo-services/assets/test_service.py:/usr/lib/cgi-bin/test_service.py
-      - ./docker/.htaccess:/var/www/html/.htaccess
+      - ./src/zoo-services/assets/dnbr.zcfg:/usr/lib/cgi-bin/dnbr.zcfg
+      - ./src/zoo-services/assets/dnbr:/usr/lib/cgi-bin/dnbr
       - ./zoo-project/zoo-services/utils/open-api/templates/index.html:/var/www/index.html
       - ./zoo-project/zoo-services/utils/open-api/static:/var/www/html/static
       - ./docker/com:/usr/com/zoo-project
       - ./docker/tmp:/tmp/zTmp
+      - /home/bla/.kube_t2_scaleway/config:/root/.kube/config
     depends_on:
       - pgbouncer
       - redis
@@ -32,12 +36,17 @@ services:
 #   platform: linux/amd64
     image: ades:latest
     volumes:
-      - ./docker/main.cfg:/usr/lib/cgi-bin/main.cfg
-      - ./docker/oas.cfg:/usr/lib/cgi-bin/oas.cfg
+      - ./assets/main.cfg:/usr/lib/cgi-bin/main.cfg
+      - ./assets/oas.cfg:/usr/lib/cgi-bin/oas.cfg
+      - ./assets/.htaccess:/var/www/html/.htaccess
+      - ./assets/cwlwrapper-assets:/assets
       - ./docker/tmp:/tmp/zTmp
       - ./docker/com:/usr/com/zoo-project
       - ./src/zoo-services/assets/HelloPy.zcfg:/usr/lib/cgi-bin/HelloPy.zcfg
       - ./src/zoo-services/assets/test_service.py:/usr/lib/cgi-bin/test_service.py
+      - ./src/zoo-services/assets/dnbr.zcfg:/usr/lib/cgi-bin/dnbr.zcfg
+      - ./src/zoo-services/assets/dnbr:/usr/lib/cgi-bin/dnbr
+      - /home/bla/.kube_t2_scaleway/config:/root/.kube/config
     depends_on:
       - rabbitmq
       - pgbouncer
