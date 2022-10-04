@@ -2,7 +2,7 @@ import sys
 import json
 import yaml
 import re
-from cwl_utils.parser import load_document_by_uri as load_cwl_uri
+from cwl_utils.parser import load_document as load_cwl
 from cwl_utils.parser import *
 
 class Process:
@@ -35,11 +35,11 @@ class Process:
 
     
     @classmethod
-    def create_from_cwl(cls, cwl_uri, workflow_id=None):
+    def create_from_cwl(cls, cwl, workflow_id=None):
         """
         Creates a Process object from a dictionary representing the CWL YAML file.
         """
-        cwl_obj = load_cwl_uri(cwl_uri)
+        cwl_obj = load_cwl(cwl)
 
         workflows = [
             item for item in cwl_obj if item.class_ == 'Workflow'
@@ -56,8 +56,28 @@ class Process:
                 raise Exception("Workflow '{0}' not found".format(workflow_id))
 
         version = 'unknown'
-        if workflow.extension_fields and 'https://schema.org/version' in workflow.extension_fields:
+        if workflow.extension_fields and 'https://schema.org/softwareVersion' in workflow.extension_fields:
+            version = workflow.extension_fields['https://schema.org/softwareVersion']
+        elif workflow.extension_fields and 'https://schema.org/version' in workflow.extension_fields:
             version = workflow.extension_fields['https://schema.org/version']
+        else:
+            # If software version is not specified inside the workflow,
+            # get it from the top level (using legacy code)
+
+            software_namespace_prefix = None
+            if "$namespaces" in cwl and isinstance(cwl["$namespaces"], dict):
+                for (prefix, uri) in cwl["$namespaces"].items():
+                    if uri in [
+                        "https://schema.org/SoftwareApplication",
+                        "https://schema.org/",
+                    ]:
+                        software_namespace_prefix = prefix
+
+            for key in ["softwareVersion", "version"]:
+                key = "{0}:{1}".format(software_namespace_prefix, key)
+                if key in cwl:
+                    version = str(cwl[key])
+                    break
 
         id = re.sub(".*#", '', workflow.id)
 

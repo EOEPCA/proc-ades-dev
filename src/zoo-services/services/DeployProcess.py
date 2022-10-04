@@ -75,9 +75,9 @@ class DeployService(object):
 
         self.service_tmp_folder = self.create_service_tmp_folder()
 
-        # self.cwl_content = self.get_application_package()
+        self.cwl_content = self.get_application_package()
 
-        self.service_configuration = Process.create_from_cwl(self.inputs["applicationPackage"]["value"])
+        self.service_configuration = Process.create_from_cwl(self.cwl_content)
 
         self.service_configuration.service_provider = (
             f"{self.service_configuration.identifier}.service"
