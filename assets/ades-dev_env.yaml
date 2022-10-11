@@ -14,3 +14,4 @@ dependencies:
   - pip
   - pip:
     - cwl_utils==0.14
+    - cheetah3

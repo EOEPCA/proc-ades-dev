@@ -81,10 +81,8 @@ curl --location --request POST 'http://localhost/ogc-api/processes/DeployProcess
 --data-raw '{
     "inputs": {
         "applicationPackage": {
-            "mimeType": "application/cwl",
-            "value": {
-                "href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"
-            }
+            "type": "application/cwl",
+			"href": "https://raw.githubusercontent.com/EOEPCA/proc-ades/develop/test/sample_apps/dNBR/dNBR.cwl#dnbr"
         }
     },
     "outputs": {
