@@ -108,6 +108,7 @@ class DeployService(object):
 
     def _get_conf_value(self, key, section="main"):
 
+        print(section,file=sys.stderr)
         if key in self.conf[section].keys():
             return self.conf[section][key]
         else:
@@ -218,5 +219,5 @@ def DeployProcess(conf, inputs, outputs):
         "status": "success"
     }
     outputs["Result"]["value"]=json.dumps(response_json)
-    return 6
-    #return zoo.SERVICE_SUCCEEDED
+    #return 6
+    return zoo.SERVICE_SUCCEEDED

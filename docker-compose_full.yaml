@@ -12,12 +12,15 @@ services:
       - ./assets/default.conf:/etc/apache2/sites-available/000-default.conf
       - ./assets/full/scripts/publish.py:/usr/lib/cgi-bin/publish.py
       - ./assets/full/scripts/subscriber.py:/usr/lib/cgi-bin/subscriber.py
-      - ./src/zoo-services/assets/cookiecutter_config.yaml:/usr/lib/cgi-bin/assets/cookiecutter_config.yaml
+      # EOEPCA Specific
+      - ./src/zoo-services/assets/cookiecutter_config.yaml:/tmp/cookiecutter_config.yaml
       - ./src/zoo-services/services/DeployProcess.py:/usr/lib/cgi-bin/DeployProcess.py
       - ./src/zoo-services/services/DeployProcess.zcfg:/usr/lib/cgi-bin/DeployProcess.zcfg
-      - ./src/zoo-services/assets/echo_service.py:/usr/lib/cgi-bin/echo_service
-      - ./src/zoo-services/assets/echo.zcfg:/usr/lib/cgi-bin/echo.zcfg
-
+      - ./src/zoo-services/services/UndeployProcess.py:/usr/lib/cgi-bin/UndeployProcess.py
+      - ./src/zoo-services/services/UndeployProcess.zcfg:/usr/lib/cgi-bin/UndeployProcess.zcfg
+      - ./src/zoo-services/services/deploy_util.py:/usr/lib/cgi-bin/deploy_util.py
+      - ./src/zoo-services/assets/HelloPy.zcfg:/usr/lib/cgi-bin/HelloPy.zcfg
+      - ./src/zoo-services/assets/test_service.py:/usr/lib/cgi-bin/test_service.py
     depends_on:
       - pgbouncer
       - redis
@@ -46,6 +49,8 @@ services:
     volumes:
       # Load the zoo kernel schema
       - ./assets/full/sql/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./assets/full/sql/async_amqp.sql:/docker-entrypoint-initdb.d/2-schema.sql
+      - ./assets/full/sql/zoo_collectiondb.sql:/docker-entrypoint-initdb.d/3-schema.sql
   pgbouncer:
     platform: linux/amd64
     image: edoburu/pgbouncer:1.8.1
@@ -55,8 +60,8 @@ services:
       MAX_DB_CONNECTIONS: 100
       DEFAULT_POOL_SIZE: 100
       POOL_MODE: transaction
-    ports:
-      - "5432:5432"
+    #ports:
+    #  - "5432:5432"
     depends_on:
       - pg
   redis:

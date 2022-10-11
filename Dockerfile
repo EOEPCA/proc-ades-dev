@@ -1,6 +1,5 @@
 FROM ubuntu:focal-20220113
 
-
 # to build:
 # docker build --rm -t ades:latest .
 # to run:
@@ -55,13 +54,15 @@ apache2 libapache2-mod-fcgid wget \
 
 ########################################
 # ZOO_KERNEL
+#ARG ZOO_PRJ_GIT_BRANCH='feature/EOEPCA-697'
 ARG ZOO_PRJ_GIT_BRANCH='feature/deploy-undeploy-ogcapi-route'
 RUN cd /opt && git clone --depth 1 https://github.com/terradue/ZOO-Project.git -b $ZOO_PRJ_GIT_BRANCH
+# COPY ZOOPGIT /opt/ZOO-Project
 WORKDIR /opt/ZOO-Project
 RUN make -C ./thirds/cgic206 libcgic.a
 RUN cd ./zoo-project/zoo-kernel \
      && autoconf \
-     && ./configure --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=$PY_VER --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr \
+     && ./configure --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=$PY_VER --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr --with-metadb=yes --with-db-backend \
      && sed -i "s/-DACCEPT_USE_OF_DEPRECATED_PROJ_API_H/-DPROJ_VERSION_MAJOR=8/g" ./ZOOMakefile.opts \
      && make -j4\
      && make install \
@@ -73,11 +74,27 @@ RUN cd ./zoo-project/zoo-kernel \
      && echo "\n[env]\nPYTHONPATH=/usr/miniconda3/envs/ades-dev/lib/python${PY_VER}/site-packages"\
           >> /usr/lib/cgi-bin/main.cfg \
      && a2enmod cgi rewrite \
-     && sed "s:AllowOverride None:AllowOverride All:g" -i /etc/apache2/apache2.conf && \
-     cd /opt/ZOO-Project && \
-     cp ./docker/.htaccess /var/www/html/.htaccess && \
+     && sed "s:AllowOverride None:AllowOverride All:g" -i /etc/apache2/apache2.conf \
+     && cd /opt/ZOO-Project \
+     && cp ./docker/.htaccess /var/www/html/.htaccess \
+     && cp -r zoo-project/zoo-services/utils/open-api/templates/index.html /var/www/index.html \
+     && cp -r zoo-project/zoo-services/utils/open-api/static /var/www/html/ \
+     && cp zoo-project/zoo-services/utils/open-api/cgi-env/* /usr/lib/cgi-bin/ \
+     && cd thirds/zcfg2sql && \
+     grep CALLBACK ../../zoo-project/zoo-kernel/ZOOMakefile.opts && \
+     grep JSON ../../zoo-project/zoo-kernel/ZOOMakefile.opts && \
+     make && \
+     cp zcfg2sql /usr/bin && \
      ln -s /tmp/ /var/www/html/temp && \
      cd .. && rm -rf ZOO-Project
+
+#
+# Install Swagger-ui
+#
+RUN git clone --depth 1 https://github.com/swagger-api/swagger-ui.git                                                     && \
+    mv swagger-ui /var/www/html/swagger-ui                                                                                && \
+    sed "s=https://petstore.swagger.io/v2/swagger.json=http://localhost/ogc-api/api=g" -i /var/www/html/swagger-ui/dist/* && \
+    mv /var/www/html/swagger-ui/dist /var/www/html/swagger-ui/oapip
 
 COPY assets/default.conf /etc/apache2/sites-available/000-default.conf
 

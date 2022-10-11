@@ -88,7 +88,7 @@ curl --location --request POST 'http://localhost/ogc-api/processes/DeployProcess
         }
     },
     "outputs": {
-        "deployResult": {
+        "Result": {
             "format": {
                 "mediaType": "application/json"
             },
