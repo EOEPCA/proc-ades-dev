@@ -162,6 +162,7 @@ class DeployService(object):
             )
 
         cookicutter_values = {}
+        cookicutter_values["service_name"] = self.service_configuration.identifier
         cookicutter_values["workflow_id"] = self.service_configuration.identifier
         cookicutter_values["conf"] = self.conf["cookiecutter"]
 
