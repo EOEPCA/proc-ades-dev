@@ -16,4 +16,4 @@ dependencies:
   - cwl-wrapper=0.10.1
   - pip
   - pip:
-    - cwl_utils
+    - cwl_utils==0.14
