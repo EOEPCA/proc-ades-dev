@@ -27,6 +27,16 @@
      UOM = meter
     </Supported>
    </LiteralData>
+  [bands]
+   Title = bands
+   Abstract = None
+   minOccurs = 1
+   maxOccurs = 999
+   <LiteralData>
+     dataType = string
+     <Default/>
+   </LiteralData>
+
  </DataInputs>
  <DataOutputs>
   [Result]

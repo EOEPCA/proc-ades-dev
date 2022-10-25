@@ -2,7 +2,7 @@ import base64
 import json
 import os
 import pathlib
-
+import sys
 import yaml
 
 from zoo_calrissian_runner import ExecutionHandler, ZooCalrissianRunner
@@ -108,6 +108,7 @@ def dnbr(conf, inputs, outputs):
         cwl = yaml.safe_load(stream)
 
     conf["lenv"]["workflow_id"]="dnbr"
+
     runner = ZooCalrissianRunner(
         cwl=cwl,
         conf=conf,

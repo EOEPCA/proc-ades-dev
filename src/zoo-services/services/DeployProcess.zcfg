@@ -6,6 +6,7 @@
  statusSupported = true
  serviceProvider = DeployProcess
  serviceType = Python
+ mutable = false
  <MetaData>
    title = Service Deploy
  </MetaData>
