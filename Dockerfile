@@ -54,10 +54,9 @@ apache2 libapache2-mod-fcgid wget \
 
 ########################################
 # ZOO_KERNEL
-#ARG ZOO_PRJ_GIT_BRANCH='feature/EOEPCA-697'
 ARG ZOO_PRJ_GIT_BRANCH='feature/deploy-undeploy-ogcapi-route'
 RUN cd /opt && git clone --depth 1 https://github.com/terradue/ZOO-Project.git -b $ZOO_PRJ_GIT_BRANCH
-# COPY ZOOPGIT /opt/ZOO-Project
+#COPY ZPGIT /opt/ZOO-Project
 WORKDIR /opt/ZOO-Project
 RUN make -C ./thirds/cgic206 libcgic.a
 RUN cd ./zoo-project/zoo-kernel \
@@ -86,6 +85,11 @@ RUN cd ./zoo-project/zoo-kernel \
      make && \
      cp zcfg2sql /usr/bin && \
      ln -s /tmp/ /var/www/html/temp && \
+     mkdir /var/www/html/examples/ && \
+     curl -o /var/www/html/examples/deployment-job.json https://raw.githubusercontent.com/EOEPCA/proc-ades/master/test/sample_apps/v2/snuggs/app-deploy-body.json && \
+     curl -o /var/www/html/examples/deployment-job1.json https://raw.githubusercontent.com/EOEPCA/proc-ades/1b55873dad2684f3333842aea77efb6fb33aa210/test/sample_apps/dNBR/app-deploy-body1.json && \
+     curl -o /var/www/html/examples/deployment-job2.json https://raw.githubusercontent.com/EOEPCA/proc-ades/master/test/sample_apps/v2/dNBR/app-deploy-body.json && \
+     curl -o /var/www/html/examples/deployment-job.yaml https://raw.githubusercontent.com/EOEPCA/app-snuggs/main/app-package.cwl && \
      cd .. && rm -rf ZOO-Project
 
 #

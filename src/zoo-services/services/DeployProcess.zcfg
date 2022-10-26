@@ -6,6 +6,7 @@
  statusSupported = true
  serviceProvider = DeployProcess
  serviceType = Python
+ mutable = false
  <MetaData>
    title = Service Deploy
  </MetaData>
@@ -36,9 +37,11 @@
    <MetaData>
     title = Deploy response message
    </MetaData>
-   <LiteralData>
-    DataType = string
-   </LiteralData>
+   <ComplexData>
+    <Default>
+    MimeType = application/json
+    </Default>
+   </ComplexData>
  </DataOutputs>
 
 

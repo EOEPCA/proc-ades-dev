@@ -6,6 +6,7 @@
 	statusSupported = true
 	serviceType = Python
 	serviceProvider = UndeployProcess
+        mutable = false
 <DataInputs>
 	[applicationPackage]
 	Title = Service Identifier

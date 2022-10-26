@@ -85,6 +85,7 @@ class DeployService(object):
         self.service_configuration.service_type = "Python"
 
         self.conf["lenv"]["workflow_id"] = self.service_configuration.identifier
+        self.conf["lenv"]["service_name"] = self.service_configuration.identifier
 
     def get_zoo_services_folder(self):
 
@@ -164,6 +165,7 @@ class DeployService(object):
 
         cookicutter_values = {}
         cookicutter_values["workflow_id"] = self.service_configuration.identifier
+        cookicutter_values["service_name"] = self.service_configuration.identifier
         cookicutter_values["conf"] = self.conf["cookiecutter"]
 
         # Create project from template
@@ -208,16 +210,27 @@ class DeployService(object):
 
 
 def DeployProcess(conf, inputs, outputs):
+    try:
+        if "applicationPackage" in inputs.keys() and "isArray" in inputs["applicationPackage"].keys() and inputs["applicationPackage"]["isArray"]=="true":
+            for i in range(int(inputs["applicationPackage"]["length"])):
+                lInputs={ "applicationPackage": { "value": inputs["applicationPackage"]["value"][i] } }
+                lInputs["applicationPackage"]["mimeType"]=inputs["applicationPackage"]["mimeType"][i]
+                deploy_process = DeployService(conf, lInputs, outputs)
+        else:
+            deploy_process = DeployService(conf, inputs, outputs)
+        #deploy_process = DeployService(conf, inputs, outputs)
 
-    deploy_process = DeployService(conf, inputs, outputs)
+        deploy_process.generate_service()
 
-    deploy_process.generate_service()
-
-    response_json ={
-        "message": f"Service {deploy_process.service_configuration.identifier} version {deploy_process.service_configuration.version} successfully deployed.",
-        "service": deploy_process.service_configuration.identifier,
-        "status": "success"
-    }
-    outputs["Result"]["value"]=json.dumps(response_json)
-    return 6
-    #return zoo.SERVICE_SUCCEEDED
+        response_json ={
+            "message": f"Service {deploy_process.service_configuration.identifier} version {deploy_process.service_configuration.version} successfully deployed.",
+            "service": deploy_process.service_configuration.identifier,
+            "status": "success"
+        }
+        outputs["Result"]["value"]=json.dumps(response_json)
+        return zoo.SERVICE_DEPLOYED
+        #conf["lenv"]["message"]=json.dumps(response_json)
+        #return zoo.SERVICE_FAILED
+    except Exception as e:
+        conf["lenv"]["message"]=str(e)
+        return zoo.SERVICE_FAILED

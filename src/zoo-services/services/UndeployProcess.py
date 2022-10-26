@@ -84,6 +84,7 @@ def UndeployProcess(conf, inputs, outputs):
     undeploy_process = UndeployService(conf, inputs, outputs)
 
     undeploy_process.remove_service()
+    print(zoo.SERVICE_UNDEPLOYED,file=sys.stderr)
 
-    return 7
+    return zoo.SERVICE_UNDEPLOYED
     #return zoo.SERVICE_SUCCEEDED
