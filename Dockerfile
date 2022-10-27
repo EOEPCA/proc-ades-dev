@@ -86,7 +86,7 @@ WORKDIR /opt/ZOO-Project
 RUN make -C ./thirds/cgic206 libcgic.a
 RUN cd ./zoo-project/zoo-kernel \
      && autoconf \
-     && ./configure --with-rabbitmq=yes --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=$PY_VER --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr --with-db-backend \
+     && ./configure --with-rabbitmq=yes --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=$PY_VER --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr --with-db-backend --with-metadb=yes\
      && echo "ZOOMakefile.opts content:" \
      && cat ZOOMakefile.opts \
      && sed -i "s/-DACCEPT_USE_OF_DEPRECATED_PROJ_API_H/-DPROJ_VERSION_MAJOR=8/g" ./ZOOMakefile.opts \

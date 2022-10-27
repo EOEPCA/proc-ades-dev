@@ -44,7 +44,8 @@ services:
       - ./src/zoo-services/assets/test_service.py:/usr/lib/cgi-bin/test_service.py
       - /home/bla/.kube_t2_scaleway/config:/root/.kube/config
 
-      ## temporary workoround
+      ## temporary workaround while zoo does not
+      ## deploy to the fpm container
       - ./src/zoo-services/assets/dnbr.zcfg:/usr/lib/cgi-bin/dnbr.zcfg
       - ./src/zoo-services/assets/dnbr:/usr/lib/cgi-bin/dnbr
       ##
@@ -80,6 +81,7 @@ services:
       - ./zoo-project/zoo-kernel/sql/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
       # Load the async AMQP schema
       - ./zoo-project/zoo-kernel/sql/async_amqp.sql:/docker-entrypoint-initdb.d/2-schema.sql
+      - ./zoo-project/zoo-kernel/sql/zoo_collectiondb.sql:/docker-entrypoint-initdb.d/3-schema.sql
     depends_on:
       - rabbitmq
   pgbouncer:
