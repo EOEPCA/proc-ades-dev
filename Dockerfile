@@ -13,21 +13,21 @@ ENV DEBIAN_FRONTEND noninteractive
 ### DEV TOOLS 
 RUN apt-get update -qqy --no-install-recommends \
 # Various cli tools
- && apt-get install -qqy --no-install-recommends wget mlocate tree \
-# C++ and CMAKE
- gcc mono-mcs cmake \
- build-essential libcgicc-dev gdb \
-#Install Docker CE CLI
- curl apt-transport-https ca-certificates gnupg2 lsb-release \
- && curl -fsSL https://download.docker.com/linux/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/gpg | apt-key add - 2>/dev/null \
- && echo "deb [arch=amd64] https://download.docker.com/linux/$(lsb_release -is | tr '[:upper:]' '[:lower:]') $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list \
- && apt-get update -qqy --no-install-recommends \
- && apt-get install -qqy --no-install-recommends docker-ce-cli && \
- apt-get clean -qqy 
+ && apt-get install -qqy --no-install-recommends  \
+    wget \
+    mlocate tree \
+    # C++ and CMAKE
+    gcc \
+    mono-mcs \
+    cmake \
+    build-essential  \
+    libcgicc-dev  \
+    gdb \
+    gettext
 
 ARG PY_VER=3.8
 # Miniconda
-RUN wget -nv \
+RUN wget -nv --no-check-certificate \
     https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh \
     && bash Miniconda3-py39_4.10.3-Linux-x86_64.sh -b -p /usr/miniconda3 \
     && rm -f Miniconda3-py39_4.10.3-Linux-x86_64.sh  
@@ -40,15 +40,39 @@ RUN conda install mamba -n base -c conda-forge && \
 ########################################
 # ZOO_Prerequisites
 
-RUN apt-get install -qqy --no-install-recommends  software-properties-common && \ 
-add-apt-repository ppa:ubuntugis/ubuntugis-unstable && \
-add-apt-repository ppa:ubuntugis/ppa && \
-apt-get update -qqy  --no-install-recommends && apt-get install -qqy  --no-install-recommends software-properties-common git wget vim \
-flex bison libfcgi-dev libxml2 libxml2-dev curl libssl-dev autoconf apache2 subversion libmozjs185-dev python3-dev python3-setuptools build-essential libxslt1-dev uuid-dev libjson-c-dev libmapserver-dev \
-libgdal-dev \
-# if you remove --with-db-backend from the configure command, uncomment the following line
-#RUN ln -s /usr/lib/x86_64-linux-gnu/libfcgi.a /usr/lib/
-apache2 libapache2-mod-fcgid wget \
+RUN apt-get install -qqy --no-install-recommends  software-properties-common \
+&& add-apt-repository ppa:ubuntugis/ubuntugis-unstable \
+&& add-apt-repository ppa:ubuntugis/ppa \
+&& apt-get update -qqy  --no-install-recommends  \
+&& apt-get install -qqy  --no-install-recommends software-properties-common \
+    git \
+    wget \
+    vim  \
+    flex \
+    bison \
+    libfcgi-dev \
+    libxml2 \
+    libxml2-dev \
+    curl \
+    libssl-dev \
+    autoconf \
+    apache2 \
+    libmozjs185-dev \
+    python3-dev \
+    python3-setuptools \
+    build-essential \
+    libxslt1-dev \
+    uuid-dev \
+    libjson-c-dev \
+    libmapserver-dev \
+    libgdal-dev \
+    librabbitmq4 \
+    librabbitmq-dev \
+    apache2 \
+    libapache2-mod-fcgid \
+    libtinyxml-dev \
+    libfftw3-dev \
+    r-base-dev \
 && a2enmod actions fcgid alias proxy_fcgi \
 && /etc/init.d/apache2 restart \
 && rm -rf /var/lib/apt/lists/* 
@@ -57,14 +81,18 @@ apache2 libapache2-mod-fcgid wget \
 # ZOO_KERNEL
 ARG ZOO_PRJ_GIT_BRANCH='feature/deploy-undeploy-ogcapi-route'
 RUN cd /opt && git clone --depth 1 https://github.com/terradue/ZOO-Project.git -b $ZOO_PRJ_GIT_BRANCH
+
 WORKDIR /opt/ZOO-Project
 RUN make -C ./thirds/cgic206 libcgic.a
 RUN cd ./zoo-project/zoo-kernel \
      && autoconf \
-     && ./configure --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=$PY_VER --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr \
+     && ./configure --with-rabbitmq=yes --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=$PY_VER --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr --with-db-backend --with-metadb=yes\
+     && echo "ZOOMakefile.opts content:" \
+     && cat ZOOMakefile.opts \
      && sed -i "s/-DACCEPT_USE_OF_DEPRECATED_PROJ_API_H/-DPROJ_VERSION_MAJOR=8/g" ./ZOOMakefile.opts \
      && make -j4\
      && make install \
+     && cp zoo_loader_fpm /usr/lib/cgi-bin \
      && cp main.cfg /usr/lib/cgi-bin \
      && cp zoo_loader.cgi /usr/lib/cgi-bin \
      && cp oas.cfg /usr/lib/cgi-bin \
@@ -85,6 +113,9 @@ RUN chmod -R 777 /usr/lib/cgi-bin
 
 RUN mkdir /tmp/cookiecutter-templates && \
     chmod -R 777 /tmp/cookiecutter-templates
+
+COPY ./docker/startUp.sh /
+RUN chmod 755 /startUp.sh
 
 EXPOSE 80
 CMD ["apachectl", "-D", "FOREGROUND"]

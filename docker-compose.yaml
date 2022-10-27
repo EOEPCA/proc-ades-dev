@@ -1,14 +1,16 @@
 version: '3'
 services:
   zookernel:
-    platform: linux/amd64
+    #    platform: linux/amd64
     image: ades:latest
     build: .
     ports:
       - "80:80"
     volumes:
-      - ./assets/classic/main.cfg:/usr/lib/cgi-bin/main.cfg
-      - ./assets/classic/oas.cfg:/usr/lib/cgi-bin/oas.cfg
+      - ./assets/main.cfg:/usr/lib/cgi-bin/main.cfg
+      - ./assets/oas.cfg:/usr/lib/cgi-bin/oas.cfg
+      - ./assets/.htaccess:/var/www/html/.htaccess
+      - ./assets/cwlwrapper-assets:/assets
       - ./src/zoo-services/assets/cookiecutter_config.yaml:/tmp/cookiecutter_config.yaml
       - ./src/zoo-services/services/DeployProcess.py:/usr/lib/cgi-bin/DeployProcess.py
       - ./src/zoo-services/services/DeployProcess.zcfg:/usr/lib/cgi-bin/DeployProcess.zcfg
@@ -17,3 +19,90 @@ services:
       - ./src/zoo-services/services/deploy_util.py:/usr/lib/cgi-bin/deploy_util.py
       - ./src/zoo-services/assets/HelloPy.zcfg:/usr/lib/cgi-bin/HelloPy.zcfg
       - ./src/zoo-services/assets/test_service.py:/usr/lib/cgi-bin/test_service.py
+      - ./zoo-project/zoo-services/utils/open-api/templates/index.html:/var/www/index.html
+      - ./zoo-project/zoo-services/utils/open-api/static:/var/www/html/static
+      - ./docker/com:/usr/com/zoo-project
+      - ./docker/tmp:/tmp/zTmp
+      - /home/bla/.kube_t2_scaleway/config:/root/.kube/config
+    depends_on:
+      - pgbouncer
+      - redis
+      - rabbitmq
+    environment:
+      - ZOO_REDIS_HOST=redis
+  zoofpm:
+    #   platform: linux/amd64
+    image: ades:latest
+    volumes:
+      - ./assets/main.cfg:/usr/lib/cgi-bin/main.cfg
+      - ./assets/oas.cfg:/usr/lib/cgi-bin/oas.cfg
+      - ./assets/.htaccess:/var/www/html/.htaccess
+      - ./assets/cwlwrapper-assets:/assets
+      - ./docker/tmp:/tmp/zTmp
+      - ./docker/com:/usr/com/zoo-project
+      - ./src/zoo-services/assets/HelloPy.zcfg:/usr/lib/cgi-bin/HelloPy.zcfg
+      - ./src/zoo-services/assets/test_service.py:/usr/lib/cgi-bin/test_service.py
+      - /home/bla/.kube_t2_scaleway/config:/root/.kube/config
+
+      ## temporary workaround while zoo does not
+      ## deploy to the fpm container
+      - ./src/zoo-services/assets/dnbr.zcfg:/usr/lib/cgi-bin/dnbr.zcfg
+      - ./src/zoo-services/assets/dnbr:/usr/lib/cgi-bin/dnbr
+      ##
+    depends_on:
+      - rabbitmq
+      - pgbouncer
+    environment:
+      - ZOO_RABBITMQ_HOST=rabbitmq
+      - STORAGE_CLASS=openebs-kernel-nfs-scw
+    command: [ "/startUp.sh" ]
+  websocketd:
+    #platform: linux/amd64
+    build: ./docker/websocketd
+    depends_on:
+      - redis
+    ports:
+      - 8888:8888
+    environment:
+      - ZOO_REDIS_HOST=redis
+    volumes:
+      - ./zoo-project/zoo-services/utils/open-api/server/subscriber.py:/shell.py
+    command: [ "--port=8888", "/shell.py" ]
+  pg:
+    #platform: linux/amd64
+    image: postgres:12.10-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: zoo
+      POSTGRES_PASSWORD: zoo
+      POSTGRES_DB: zoo
+    volumes:
+      # Load the zoo kernel schema
+      - ./zoo-project/zoo-kernel/sql/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      # Load the async AMQP schema
+      - ./zoo-project/zoo-kernel/sql/async_amqp.sql:/docker-entrypoint-initdb.d/2-schema.sql
+      - ./zoo-project/zoo-kernel/sql/zoo_collectiondb.sql:/docker-entrypoint-initdb.d/3-schema.sql
+    depends_on:
+      - rabbitmq
+  pgbouncer:
+    #platform: linux/amd64
+    image: edoburu/pgbouncer:1.12.0
+    environment:
+      DATABASE_URL: "postgres://zoo:zoo@pg/zoo"
+      MAX_CLIENT_CONN: 1000
+      MAX_DB_CONNECTIONS: 100
+      DEFAULT_POOL_SIZE: 100
+      POOL_MODE: transaction
+    ports:
+      - "5432:5432"
+    depends_on:
+      - pg
+  redis:
+    image: redis:6.0.9
+  rabbitmq:
+    image: rabbitmq:3.8.9-management-alpine
+    volumes:
+      - ./docker/definitions.json:/etc/rabbitmq/definitions.json
+    ports:
+      - "15672:15672"
+      - "5672:5672"

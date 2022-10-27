@@ -24,12 +24,12 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 import zoo
-
-
+import sys
 def HelloPy(conf, inputs, outputs):
     outputs["Result"]["value"] = (
         "Hello " + inputs["a"]["value"] + " from Python World !"
     )
+    print(inputs, file=sys.stderr)
     return zoo.SERVICE_SUCCEEDED
 
 
