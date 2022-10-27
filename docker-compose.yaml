@@ -1,7 +1,7 @@
 version: '3'
 services:
   zookernel:
-#    platform: linux/amd64
+    #    platform: linux/amd64
     image: ades:latest
     build: .
     ports:
@@ -23,6 +23,7 @@ services:
       - ./zoo-project/zoo-services/utils/open-api/static:/var/www/html/static
       - ./docker/com:/usr/com/zoo-project
       - ./docker/tmp:/tmp/zTmp
+      - /home/bla/.kube_t2_scaleway/config:/root/.kube/config
     depends_on:
       - pgbouncer
       - redis
@@ -30,7 +31,7 @@ services:
     environment:
       - ZOO_REDIS_HOST=redis
   zoofpm:
-#   platform: linux/amd64
+    #   platform: linux/amd64
     image: ades:latest
     volumes:
       - ./assets/main.cfg:/usr/lib/cgi-bin/main.cfg
@@ -42,6 +43,11 @@ services:
       - ./src/zoo-services/assets/HelloPy.zcfg:/usr/lib/cgi-bin/HelloPy.zcfg
       - ./src/zoo-services/assets/test_service.py:/usr/lib/cgi-bin/test_service.py
       - /home/bla/.kube_t2_scaleway/config:/root/.kube/config
+
+      ## temporary workoround
+      - ./src/zoo-services/assets/dnbr.zcfg:/usr/lib/cgi-bin/dnbr.zcfg
+      - ./src/zoo-services/assets/dnbr:/usr/lib/cgi-bin/dnbr
+      ##
     depends_on:
       - rabbitmq
       - pgbouncer

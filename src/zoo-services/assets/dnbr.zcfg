@@ -1,0 +1,58 @@
+[dnbr]
+  Title = dNBR - produce the delta normalized difference between NIR and SWIR 22 over a pair of stac items
+  Abstract = dNBR - produce the delta normalized difference between NIR and SWIR 22 over a pair of stac items
+  serviceType = Python
+  serviceProvider = dnbr.service
+  processVersion = 0.1.0
+  storeSupported = true
+  statusSupported = true
+  <DataInputs>
+    [pre_stac_item]
+      Title = pre_stac_item
+      Abstract = Pre-event Sentinel-2 item
+      minOccurs = 1
+      maxOccurs = 1
+      <LiteralData>
+        dataType = string
+        <Default/>
+      </LiteralData>
+    [post_stac_item]
+      Title = post_stac_item
+      Abstract = Post-event Sentinel-2 item
+      minOccurs = 1
+      maxOccurs = 1
+      <LiteralData>
+        dataType = string
+        <Default/>
+      </LiteralData>
+    [aoi]
+      Title = aoi
+      Abstract = area of interest as a bounding box
+      minOccurs = 1
+      maxOccurs = 1
+      <LiteralData>
+        dataType = string
+        <Default/>
+      </LiteralData>
+    [bands]
+      Title = bands
+      Abstract = None
+      minOccurs = 1
+      maxOccurs = 999
+      <LiteralData>
+        dataType = string
+        <Default>
+          value = ['B8A', 'B12', 'SCL']
+        </Default>
+      </LiteralData>
+  </DataInputs>
+  <DataOutputs>
+    [stac]
+      Title = stac
+      Abstract = None
+      <ComplexData>
+        <Default>
+          mimeType = application/json
+        </Default>
+      </ComplexData>
+  </DataOutputs>
