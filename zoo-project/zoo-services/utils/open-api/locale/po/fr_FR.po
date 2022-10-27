@@ -1,0 +1,138 @@
+# ZOO-Service OGC API - Processes services
+# Copyright (C) YEAR GeoLabs
+# This file is distributed under the same license as the ZOO-Service OGC API - Processes services package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# Gérald FENOY <gerald.fenoy@geolabs.fr>, 2022
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ZOO-Service OGC API - Processes services 1.8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-06 18:30+0100\n"
+"PO-Revision-Date: 2022-01-06 17:33+0000\n"
+"Last-Translator: Gérald FENOY <gerald.fenoy@geolabs.fr>, 2022\n"
+"Language-Team: French (France) (https://www.transifex.com/zoo-project/teams/128775/fr_FR/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: fr_FR\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: service.c:1
+msgid "Print Cheetah templates as HTML"
+msgstr "Restitue un modèle Cheetah"
+
+#: service.c:2
+msgid "Template name"
+msgstr "Nom du modèle"
+
+#: service.c:3
+msgid "The welcome message"
+msgstr "Le message de bienvenue"
+
+#: service.c:4
+msgid "Print Cheetah templates as HTML."
+msgstr "Restitue un modèle Cheetah."
+
+#: service.c:5
+msgid "The name of the template to fill."
+msgstr "Le nom du modèle à remplir"
+
+#: service.c:6
+msgid "The HTML content out of the template."
+msgstr "Le contenu HTML en sortie de la restitution du modèle."
+
+#: service.c:7
+msgid "View this document in JSON."
+msgstr "Voir ce document en JSON."
+
+#: service.c:8
+msgid "View the alternative version in HTML."
+msgstr "Voir cette version alternative en HTML."
+
+#: service.c:9
+msgid "View the conformance classes that the link's context conforms to."
+msgstr "Voir les classes de conformités auxquelles le lien se conforme."
+
+#: service.c:10
+msgid "View the service description."
+msgstr "Voir la description du service."
+
+#: service.c:11
+msgid "View service documentation."
+msgstr "Voir la documentation du service."
+
+#: service.c:12
+msgid "View the list of processes the API offers."
+msgstr "Voir la liste des services offerts part cet API."
+
+#: service.c:13
+msgid "View the results of a process."
+msgstr "Voir les résultats de l'exécution d'un service."
+
+#: service.c:14
+msgid "View the current status of a job execution."
+msgstr "Voir le status actuel de la tâche en cours d'exécution."
+
+#: service.c:15
+msgid "View the execution endpoint of a process."
+msgstr "Voir le lien d'exécution d'un service."
+
+#: service.c:16
+msgid "View the list of job available on this server."
+msgstr "Voir la liste des tâches disponibles sur ce serveur."
+
+#: templates/index.html:78
+msgid "Home"
+msgstr "Acceuil"
+
+#: templates/index.html:127
+msgid "View default (no title found for "
+msgstr "Voir défaut (pas de titre trouvé pour "
+
+#: templates/index.html:276
+msgid "Add"
+msgstr "Ajouter"
+
+#: templates/index.html:277 templates/index.html:549
+msgid "Delete"
+msgstr "Supprimer"
+
+#: templates/index.html:290
+msgid "Address"
+msgstr "Adresse"
+
+#: templates/index.html:314
+msgid "Provider"
+msgstr "Fournisseur"
+
+#: templates/index.html:315
+msgid "Contact"
+msgstr "Contact"
+
+#: templates/index.html:403
+msgid "Submit"
+msgstr "Lancer"
+
+#: templates/index.html:425
+msgid "Close"
+msgstr "Fermer"
+
+#: templates/index.html:426
+msgid "Submit Job"
+msgstr "Lancer la tâche"
+
+#: templates/index.html:588
+msgid "Display original data as JSON"
+msgstr "Affiche le format original en JSON"
+
+#: templates/index.html:659
+msgid "Powered by"
+msgstr "Propulsé par"
+
+#: templates/index.html:681
+msgid "Message"
+msgstr "Message"
