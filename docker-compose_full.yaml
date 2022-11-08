@@ -24,11 +24,40 @@ services:
     depends_on:
       - pgbouncer
       - redis
+      - rabbitmq
     environment:
       - ZOO_REDIS_HOST=redis
+    extra_hosts:
+      - "macbook-pro-de-gerald-1:127.0.0.1"
+  zoofpm:
+    #   platform: linux/amd64
+    image: ades:latest
+    volumes:
+      - ./assets/full/main.cfg:/usr/lib/cgi-bin/main.cfg
+      - ./assets/full/oas.cfg:/usr/lib/cgi-bin/oas.cfg
+      - ./assets/default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./assets/full/scripts/publish.py:/usr/lib/cgi-bin/publish.py
+      - ./assets/full/scripts/subscriber.py:/usr/lib/cgi-bin/subscriber.py
+      - ./assets/full/scripts/startUp.sh:/docker/startUp.sh:/startUp.sh
+      # EOEPCA Specific
+      - ./src/zoo-services/assets/cookiecutter_config.yaml:/tmp/cookiecutter_config.yaml
+      - ./src/zoo-services/services/DeployProcess.py:/usr/lib/cgi-bin/DeployProcess.py
+      - ./src/zoo-services/services/DeployProcess.zcfg:/usr/lib/cgi-bin/DeployProcess.zcfg
+      - ./src/zoo-services/services/UndeployProcess.py:/usr/lib/cgi-bin/UndeployProcess.py
+      - ./src/zoo-services/services/UndeployProcess.zcfg:/usr/lib/cgi-bin/UndeployProcess.zcfg
+      - ./src/zoo-services/services/deploy_util.py:/usr/lib/cgi-bin/deploy_util.py
+      - ./src/zoo-services/assets/HelloPy.zcfg:/usr/lib/cgi-bin/HelloPy.zcfg
+      - ./src/zoo-services/assets/test_service.py:/usr/lib/cgi-bin/test_service.py
+    depends_on:
+      - rabbitmq
+      - pgbouncer
+    environment:
+      - ZOO_RABBITMQ_HOST=rabbitmq
+      - STORAGE_CLASS=openebs-kernel-nfs-scw
+    command: [ "/startUp.sh" ]
   websocketd:
     platform: linux/amd64
-    build: ./assets/full/docker/websocketd
+    build: ./assets/full/websocketd
     depends_on:
       - redis
     ports:
@@ -60,9 +89,16 @@ services:
       MAX_DB_CONNECTIONS: 100
       DEFAULT_POOL_SIZE: 100
       POOL_MODE: transaction
-    #ports:
-    #  - "5432:5432"
+    ports:
+      - "5432:5432"
     depends_on:
       - pg
   redis:
     image: redis:6.0.9
+  rabbitmq:
+    image: rabbitmq:3.8.9-management-alpine
+    volumes:
+      - ./assets/full/definitions.json:/etc/rabbitmq/definitions.json
+    ports:
+      - "15672:15672"
+      - "5672:5672"

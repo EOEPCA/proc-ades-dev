@@ -69,6 +69,14 @@ class UndeployService(object):
 
 
     def remove_service(self):
+        import psycopg2
+        import psycopg2.extensions
+        psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+        conn = psycopg2.connect("host=%s port=%s dbname=%s user=%s password=%s" % (self.conf["metadb"]["host"], self.conf["metadb"]["port"], self.conf["metadb"]["dbname"], self.conf["metadb"]["user"], self.conf["metadb"]["password"]))
+        cur = conn.cursor()
+        cur.execute("DELETE FROM collectiondb.ows_process WHERE identifier='%s'" % (self.get_process_identifier()))
+        conn.commit()
+        conn.close()
         service_folder = os.path.join(self.zooservices_folder, self.service_identifier)
         if os.path.isdir(service_folder):
             shutil.rmtree(service_folder)

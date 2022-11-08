@@ -15,3 +15,4 @@ dependencies:
   - pip:
     - cwl_utils==0.14
     - cheetah3
+    - psycopg2-binary

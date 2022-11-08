@@ -42,12 +42,37 @@ RUN conda install mamba -n base -c conda-forge && \
 RUN apt-get install -qqy --no-install-recommends  software-properties-common && \ 
 add-apt-repository ppa:ubuntugis/ubuntugis-unstable && \
 add-apt-repository ppa:ubuntugis/ppa && \
-apt-get update -qqy  --no-install-recommends && apt-get install -qqy  --no-install-recommends software-properties-common git wget vim \
-flex bison libfcgi-dev libxml2 libxml2-dev curl libssl-dev autoconf apache2 subversion libmozjs185-dev python3-dev python3-setuptools build-essential libxslt1-dev uuid-dev libjson-c-dev libmapserver-dev \
-libgdal-dev \
+apt-get update -qqy  --no-install-recommends && \
+apt-get install -qqy  --no-install-recommends software-properties-common\
+	git\
+	wget\
+	vim\
+	flex\
+	bison\
+	libfcgi-dev\
+	libxml2\
+	libxml2-dev\
+	curl\
+	libssl-dev\
+	autoconf\
+	apache2\
+	subversion\
+	libmozjs185-dev\
+	python3-dev\
+	python3-setuptools\
+	build-essential\
+	libxslt1-dev\
+	uuid-dev\
+	libjson-c-dev\
+	libmapserver-dev\
+	libgdal-dev\
+	libaprutil1-dev \
+	librabbitmq-dev\
+	libapache2-mod-fcgid\
+	wget \
+	pkg-config\
 # if you remove --with-db-backend from the configure command, uncomment the following line
 #RUN ln -s /usr/lib/x86_64-linux-gnu/libfcgi.a /usr/lib/
-apache2 libapache2-mod-fcgid wget \
 && a2enmod actions fcgid alias proxy_fcgi \
 && /etc/init.d/apache2 restart \
 && rm -rf /var/lib/apt/lists/* 
@@ -61,12 +86,13 @@ WORKDIR /opt/ZOO-Project
 RUN make -C ./thirds/cgic206 libcgic.a
 RUN cd ./zoo-project/zoo-kernel \
      && autoconf \
-     && ./configure --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=$PY_VER --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr --with-metadb=yes --with-db-backend \
+     && ./configure --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=$PY_VER --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr --with-metadb=yes --with-db-backend --with-rabbitmq=yes \
      && sed -i "s/-DACCEPT_USE_OF_DEPRECATED_PROJ_API_H/-DPROJ_VERSION_MAJOR=8/g" ./ZOOMakefile.opts \
      && make -j4\
      && make install \
      && cp main.cfg /usr/lib/cgi-bin \
      && cp zoo_loader.cgi /usr/lib/cgi-bin \
+     && cp zoo_loader_fpm /usr/lib/cgi-bin \
      && cp oas.cfg /usr/lib/cgi-bin \
      && sed -i "s%http://www.zoo-project.org/zoo/%http://127.0.0.1%g" /usr/lib/cgi-bin/main.cfg \
      && sed -i "s%../tmpPathRelativeToServerAdress/%http://localhost/temp/%g" /usr/lib/cgi-bin/main.cfg \
