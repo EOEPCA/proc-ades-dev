@@ -95,7 +95,7 @@ class Tests(unittest.TestCase):
         self.inputs["applicationPackage"] = {"value": cwl_data}
 
         self.outputs = {}
-        self.outputs["deployResult"] = {}
+        self.outputs["Result"] = {}
 
     def tearDown(self):
         process_tmp = os.path.join(self.tmp_dir, "DeployProcess-process_id_value")

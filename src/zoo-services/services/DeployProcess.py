@@ -225,7 +225,7 @@ def DeployProcess(conf, inputs, outputs):
             "service": deploy_process.service_configuration.identifier,
             "status": "success"
         }
-        outputs["deployResult"]["value"]=json.dumps(response_json)
+        outputs["Result"]["value"]=json.dumps(response_json)
         return zoo.SERVICE_DEPLOYED
 
     except Exception as e:
