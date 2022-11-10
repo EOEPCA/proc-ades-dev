@@ -13,8 +13,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: sergeysova/jq-action@v2
-      - name: Build Dockerfile
-        run: docker-compose build --no-cache
+      - name: Build Ades
+        run: docker build . --tag ades:latest --no-cache
       - name: Run Ades
         run: docker-compose up -d
       - name: "Test1: List Services"
