@@ -40,11 +40,11 @@ RUN conda install mamba -n base -c conda-forge && \
 ########################################
 # ZOO_Prerequisites
 
-RUN apt-get install -qqy --no-install-recommends  software-properties-common \
+RUN apt-get update -qqy --no-install-recommends && apt-get install -qqy --no-install-recommends  software-properties-common \
 && add-apt-repository ppa:ubuntugis/ubuntugis-unstable \
 && add-apt-repository ppa:ubuntugis/ppa \
 && apt-get update -qqy  --no-install-recommends  \
-&& apt-get install -qqy  --no-install-recommends software-properties-common \
+&& apt-get install -qqy  --no-install-recommends \
     git \
     wget \
     vim  \
