@@ -4,7 +4,7 @@
 	"name": "Ades-dev",
 	"build": {
 		"dockerfile": "Dockerfile",
-		"context": "..",
+		"context": ".."
 	},
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
@@ -16,7 +16,7 @@
 			"test_*.py"
 		],
 		"python.testing.unittestEnabled": true,
-		"python.defaultInterpreterPath": "/usr/miniconda3/envs/ades-dev/bin/python",
+		"python.defaultInterpreterPath": "/usr/miniconda3/envs/ades-dev/bin/python"
 	},
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
@@ -37,7 +37,7 @@
 	"features": {
 		"git": "latest",
 		"github-cli": "latest",
-		"sshd": "latest",
+		"sshd": "latest"
 	},
 	"runArgs": [
 		"--init"

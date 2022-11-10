@@ -9,6 +9,7 @@ except ImportError:
         def __init__(self):
             self.SERVICE_SUCCEEDED = 3
             self.SERVICE_FAILED = 4
+            self.SERVICE_DEPLOYED = 6
 
         def update_status(self, conf, progress):
             print(f"Status {progress}")
@@ -224,10 +225,9 @@ def DeployProcess(conf, inputs, outputs):
             "service": deploy_process.service_configuration.identifier,
             "status": "success"
         }
-        outputs["Result"]["value"]=json.dumps(response_json)
+        outputs["deployResult"]["value"]=json.dumps(response_json)
         return zoo.SERVICE_DEPLOYED
-        #conf["lenv"]["message"]=json.dumps(response_json)
-        #return zoo.SERVICE_FAILED
+
     except Exception as e:
         conf["lenv"]["message"]=str(e)
         return zoo.SERVICE_FAILED

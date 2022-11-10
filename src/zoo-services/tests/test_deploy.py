@@ -7,6 +7,7 @@ except ImportError:
         def __init__(self):
             self.SERVICE_SUCCEEDED = 3
             self.SERVICE_FAILED = 4
+            self.SERVICE_DEPLOYED = 6
 
         def update_status(self, conf, progress):
             print(f"Status {progress}")
@@ -75,7 +76,7 @@ class Tests(unittest.TestCase):
         self.conf["renv"]["CONTEXT_DOCUMENT_ROOT"] = self.tmp_dir
         self.conf["cookiecutter"] = {
             "templatesPath": self.cookiecutter_templates_folder,
-            "templateUrl": "https://github.com/EOEPCA/proc-service-template.git",
+            "templateUrl": "https://github.com/bbrauzzi/proc-service-template.git",
             "configurationFile": self.cookiecutter_config_file,
         }
         self.conf["main"] = {"tmpPath": self.tmp_dir}
@@ -84,7 +85,9 @@ class Tests(unittest.TestCase):
         }
 
         # load application package from file
-        cwl_file = open("dnbr.cwl", "r")
+        THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+        dnbr_file = os.path.join(THIS_DIR, "dnbr.cwl")
+        cwl_file = open(dnbr_file, "r")
         cwl_data = cwl_file.read()
         cwl_file.close()
 
@@ -180,7 +183,11 @@ class Tests(unittest.TestCase):
             ),
             True,
         )
-        self.assertEqual(r, zoo.SERVICE_SUCCEEDED)
+
+        if r != zoo.SERVICE_DEPLOYED:
+            raise self.failureException(self.conf["lenv"]["message"])
+            
+        self.assertEqual(r, zoo.SERVICE_DEPLOYED)
 
 
 if __name__ == '__main__':

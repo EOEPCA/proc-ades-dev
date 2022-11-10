@@ -23,9 +23,10 @@ RUN wget \
 
 ENV PATH="/usr/miniconda3/bin:${PATH}"
 ARG PATH="/usr/miniconda3/bin:${PATH}"
-RUN conda --version
-RUN conda create -n ades-dev python=3.8 python=3.8 workflow-executor=1.0.23 jinja2 cookiecutter=1.7.2 boto3 coverage -y -c conda-forge -c eoepca -c anaconda
-
+#RUN conda --version
+#RUN conda create -n ades-dev python=3.8 python=3.8 workflow-executor=1.0.23 jinja2 cookiecutter=1.7.2 boto3 coverage -y -c conda-forge -c eoepca -c anaconda
+COPY .devcontainer/ades-dev_env.yaml /tmp/ades-dev_env.yaml
+RUN conda env create --file /tmp/ades-dev_env.yaml
 
 ENV LD_LIBRARY_PATH="/usr/miniconda3/envs/ades-dev/lib:$LD_LIBRARY_PATH"
 
