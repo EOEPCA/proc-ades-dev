@@ -1,6 +1,0 @@
-aioredis
-appdirs
-hiredis
-websockets
-Cheetah3
-redis

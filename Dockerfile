@@ -80,13 +80,14 @@ RUN apt-get update -qqy --no-install-recommends && apt-get install -qqy --no-ins
 ########################################
 # ZOO_KERNEL
 ARG ZOO_PRJ_GIT_BRANCH='feature/deploy-undeploy-ogcapi-route'
-RUN cd /opt && git clone --depth 1 https://github.com/terradue/ZOO-Project.git -b $ZOO_PRJ_GIT_BRANCH
+RUN cd /opt && git clone https://github.com/terradue/ZOO-Project.git -b $ZOO_PRJ_GIT_BRANCH
 
 WORKDIR /opt/ZOO-Project
 RUN make -C ./thirds/cgic206 libcgic.a
 RUN cd ./zoo-project/zoo-kernel \
      && autoconf \
-     && ./configure --with-rabbitmq=yes --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=$PY_VER --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr --with-db-backend --with-metadb=yes\
+#     && ./configure --with-rabbitmq=yes --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=$PY_VER --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr --with-db-backend --with-metadb=yes\
+     && ./configure --with-rabbitmq=yes --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=$PY_VER --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr --with-db-backend \
      && echo "ZOOMakefile.opts content:" \
      && cat ZOOMakefile.opts \
      && sed -i "s/-DACCEPT_USE_OF_DEPRECATED_PROJ_API_H/-DPROJ_VERSION_MAJOR=8/g" ./ZOOMakefile.opts \
