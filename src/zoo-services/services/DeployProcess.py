@@ -185,19 +185,20 @@ class DeployService(object):
                 config_file=self.cookiecutter_configuration_file
             )
 
-        #zcfg_file = os.path.join(
-        #    self.zooservices_folder, f"{self.service_configuration.identifier}.zcfg"
-        #)
+        if "metadb" not in self.conf:
+            zcfg_file = os.path.join(
+                self.zooservices_folder, f"{self.service_configuration.identifier}.zcfg"
+            )
+            with open(zcfg_file, "w") as file:
+                self.service_configuration.write_zcfg(file)
 
         # checking if service had already been deployed previously
         # if yes, delete it before redeploy the new one
         old_service = os.path.join(self.zooservices_folder,self.service_configuration.identifier)
         if os.path.isdir(old_service):
             shutil.rmtree(old_service)
-            #os.remove(zcfg_file)
-
-        #with open(zcfg_file, "w") as file:
-        #    self.service_configuration.write_zcfg(file)
+            if "metadb" not in self.conf:
+                os.remove(zcfg_file)
 
         if not("noRunSql" in self.conf["lenv"] and self.conf["lenv"]["noRunSql"]!="false"):
             rSql=self.service_configuration.run_sql(self.conf)
