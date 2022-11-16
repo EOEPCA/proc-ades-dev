@@ -199,6 +199,98 @@ class Process:
                 print("      </LiteralData>", file=stream)
         print("  </DataOutputs>", file=stream)
 
+    def run_sql(self, conf):
+        """
+        Store the metadata informations in the ZOO-Project database
+        """
+        import psycopg2
+        import psycopg2.extensions
+        psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+        conn = psycopg2.connect("host=%s port=%s dbname=%s user=%s password=%s" % (conf["metadb"]["host"], conf["metadb"]["port"], conf["metadb"]["dbname"], conf["metadb"]["user"], conf["metadb"]["password"]))
+        cur = conn.cursor()
+        if "orequest_method" in conf["lenv"]:
+            cur.execute("DELETE FROM collectiondb.ows_process WHERE identifier=$q$%s$q$" % (self.identifier))
+        conn.commit()
+        cur.execute("SELECT id FROM collectiondb.ows_process WHERE identifier=$q$%s$q$" % (self.identifier))
+        vals = cur.fetchone()
+        if vals is not None:
+            conn.close()
+            return False
+        conn.commit()
+        cur.execute(("INSERT INTO CollectionDB.zoo_DeploymentMetadata"+
+                  "(executable_name,service_type_id)"+
+                  " VALUES "+
+                  " ($q${0}$q$,"+
+                  "(SELECT id from CollectionDB.zoo_ServiceTypes WHERE service_type=$q${1}$q$));")
+                  .format(self.service_provider,self.service_type))
+        cur.execute("INSERT INTO CollectionDB.zoo_PrivateMetadata(id) VALUES (default);")
+        cur.execute("INSERT INTO CollectionDB.PrivateMetadataDeploymentMetadataAssignment(private_metadata_id,deployment_metadata_id) VALUES"+
+                  "((SELECT last_value FROM CollectionDB.zoo_PrivateMetadata_id_seq),"+
+                  "(SELECT last_value FROM CollectionDB.zoo_DeploymentMetadata_id_seq));")
+        cur.execute(("INSERT INTO CollectionDB.ows_Process"+
+                  "(identifier,title,abstract,private_metadata_id,mutable,availability)"+
+                  "VALUES"+
+                  "($q${0}$q$,"+
+                  "$q${1}$q$,"+
+                  "$q${2}$q$,"+
+                  "(SELECT last_value FROM CollectionDB.PrivateMetadataDeploymentMetadataAssignment_id_seq),"+
+                  "true,true);").format(self.identifier,self.title,self.description))
+        cur.execute("CREATE TEMPORARY TABLE pid AS (select last_value as id from CollectionDB.Descriptions_id_seq);")
+        # Inputs treatment
+        for input in self.inputs:
+            if input.is_complex:
+                pass
+            else:
+                cur.execute("INSERT INTO CollectionDB.LiteralDataDomain (def,data_type_id) VALUES "+
+                          "(true,(SELECT id from CollectionDB.PrimitiveDatatypes where name = $q${0}$q$));".format(input.type))
+                if input.possible_values:
+                    for i in range(len(input.possible_values)):
+                        cur.execute("INSERT INTO CollectionDB.AllowedValues (allowed_value) VALUES ($q${0}$q$);".format(input.possible_values[i]))
+                        cur.execute("INSERT INTO CollectionDB.AllowedValuesAssignment (literal_data_domain_id,allowed_value_id) VALUES ("+
+                                        "(select last_value as id from CollectionDB.LiteralDataDomain_id_seq)"+
+                                        "(select last_value as id from CollectionDB.AllowedValues_id_seq)"
+                                        ");")
+                if input.default_value:
+                    cur.execute("UPDATE CollectionDB.LiteralDataDomain"+
+                                    "set default_value = $q${0}$q$ ".format(input.default_value)+
+                                    " WHERE id = "+
+                                    "  ((SELECT last_value FROM CollectionDB.ows_DataDescription_id_seq));")
+
+            cur.execute(("INSERT INTO CollectionDB.ows_Input (identifier,title,abstract,min_occurs,max_occurs) VALUES "+
+                      "($q${0}$q$,"+
+                      "$q${1}$q$,"+
+                      "$q${2}$q$,"+
+                      "{3},"+
+                      "{4});").format(input.identifier,
+                                         input.title,
+                                         input.description,
+                                         input.min_occurs,
+                                         999 if input.max_occurs == 0 else input.max_occurs))
+            cur.execute("INSERT INTO CollectionDB.InputDataDescriptionAssignment (input_id,data_description_id) VALUES ((select last_value as id from CollectionDB.Descriptions_id_seq),(select last_value from CollectionDB.ows_DataDescription_id_seq));");
+            cur.execute("INSERT INTO CollectionDB.ProcessInputAssignment(process_id,input_id) VALUES((select id from pid),(select last_value as id from CollectionDB.Descriptions_id_seq));")
+        # Output treatment
+        for output in self.outputs:
+            if output.is_complex:
+                cur.execute("INSERT INTO CollectionDB.ows_Format (def,primitive_format_id) VALUES "+
+                          "(true,(SELECT id from CollectionDB.PrimitiveFormats WHERE mime_type='{0}' LIMIT 1));".format(
+                              output.file_content_type
+                              if output.file_content_type
+                              else "text/plain"
+                              ))
+            else:
+                pass
+            cur.execute("INSERT INTO CollectionDB.ows_DataDescription (format_id) VALUES ((SELECT last_value FROM CollectionDB.ows_Format_id_seq));")
+            cur.execute("INSERT INTO CollectionDB.ows_Output"+
+                      "(identifier,title,abstract)"+
+                      " VALUES "+
+                      "($q${0}$q$,$q${1}$q$,$q${2}$q$);".format(output.identifier,output.title,output.description))
+            cur.execute("INSERT INTO CollectionDB.OutputDataDescriptionAssignment (output_id,data_description_id) VALUES ((select last_value as id from CollectionDB.Descriptions_id_seq),(select last_value from CollectionDB.ows_DataDescription_id_seq));")
+            cur.execute("INSERT INTO CollectionDB.ProcessOutputAssignment(process_id,output_id) VALUES((select id from pid),(select last_value as id from CollectionDB.Descriptions_id_seq));")
+        cur.execute("DROP TABLE pid;")
+        conn.commit()
+        conn.close()
+        return True
+
     def write_ogc_api_json(self, stream):
         ogc = self.get_ogc_api_json()
         print(json.dumps(ogc, indent=2), file=stream)
