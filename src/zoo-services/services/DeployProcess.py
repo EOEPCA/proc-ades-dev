@@ -249,7 +249,7 @@ def DeployProcess(conf, inputs, outputs):
         #conf["lenv"]["message"]=json.dumps(response_json)
         #return zoo.SERVICE_FAILED
     except Exception as e:
-        print("Exception in Python service", file=sys.stderr)
-        print(e, file=sys.stderr)
-        conf["lenv"]["message"] = str(e)
+        print("Exception in Python service",file=sys.stderr)
+        print(e,file=sys.stderr)
+        conf["lenv"]["message"]=str(e)
         return zoo.SERVICE_FAILED

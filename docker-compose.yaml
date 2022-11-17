@@ -1,7 +1,7 @@
 version: '3'
 services:
   zookernel:
-    #    platform: linux/amd64
+    platform: linux/amd64
     image: ades:latest
     build: .
     ports:
@@ -11,6 +11,7 @@ services:
       - ./assets/oas.cfg:/usr/lib/cgi-bin/oas.cfg
       - ./assets/.htaccess:/var/www/html/.htaccess
       - ./assets/cwlwrapper-assets:/assets
+      # EOEPCA Specific
       - ./src/zoo-services/assets/cookiecutter_config.yaml:/tmp/cookiecutter_config.yaml
       - ./src/zoo-services/services/DeployProcess.py:/usr/lib/cgi-bin/DeployProcess.py
       - ./src/zoo-services/services/DeployProcess.zcfg:/usr/lib/cgi-bin/DeployProcess.zcfg
@@ -19,10 +20,6 @@ services:
       - ./src/zoo-services/services/deploy_util.py:/usr/lib/cgi-bin/deploy_util.py
       - ./src/zoo-services/assets/HelloPy.zcfg:/usr/lib/cgi-bin/HelloPy.zcfg
       - ./src/zoo-services/assets/test_service.py:/usr/lib/cgi-bin/test_service.py
-      - ./assets/open-api/templates/index.html:/var/www/index.html
-      - ./assets/open-api/static:/var/www/html/static
-      - ./docker/com:/usr/com/zoo-project
-      - ./docker/tmp:/tmp/zTmp
     depends_on:
       - pgbouncer
       - redis
@@ -35,15 +32,23 @@ services:
     volumes:
       - ./assets/main.cfg:/usr/lib/cgi-bin/main.cfg
       - ./assets/oas.cfg:/usr/lib/cgi-bin/oas.cfg
-      - ./assets/.htaccess:/var/www/html/.htaccess
-      - ./assets/cwlwrapper-assets:/assets
-      - ./docker/tmp:/tmp/zTmp
-      - ./docker/com:/usr/com/zoo-project
+      - ./assets/default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./assets/open-api/server/publish.py:/usr/lib/cgi-bin/publish.py
+      - ./assets/open-api/server/subscriber.py:/usr/lib/cgi-bin/subscriber.py
+      - ./assets/open-api/server/startUp.sh:/startUp.sh
+      # EOEPCA Specific
+      - ./src/zoo-services/assets/cookiecutter_config.yaml:/tmp/cookiecutter_config.yaml
+      - ./src/zoo-services/services/DeployProcess.py:/usr/lib/cgi-bin/DeployProcess.py
+      - ./src/zoo-services/services/DeployProcess.zcfg:/usr/lib/cgi-bin/DeployProcess.zcfg
+      - ./src/zoo-services/services/UndeployProcess.py:/usr/lib/cgi-bin/UndeployProcess.py
+      - ./src/zoo-services/services/UndeployProcess.zcfg:/usr/lib/cgi-bin/UndeployProcess.zcfg
+      - ./src/zoo-services/services/deploy_util.py:/usr/lib/cgi-bin/deploy_util.py
       - ./src/zoo-services/assets/HelloPy.zcfg:/usr/lib/cgi-bin/HelloPy.zcfg
       - ./src/zoo-services/assets/test_service.py:/usr/lib/cgi-bin/test_service.py
 
       # set the kubeconfig path here
       # - /home/user/.kube/config:/root/.kube/config
+
 
     depends_on:
       - rabbitmq
@@ -59,7 +64,7 @@ services:
 
     command: [ "/startUp.sh" ]
   websocketd:
-    #platform: linux/amd64
+    platform: linux/amd64
     build: ./docker/websocketd
     depends_on:
       - redis
@@ -69,10 +74,10 @@ services:
       - ZOO_REDIS_HOST=redis
     volumes:
       - ./assets/open-api/server/subscriber.py:/shell.py
-    command: [ "--port=8888", "/shell.py" ]
+    command: ["--port=8888", "/shell.py"]
   pg:
-    #platform: linux/amd64
-    image: postgres:12.10-alpine
+    platform: linux/amd64
+    image: postgres:9.6.18-alpine
     restart: always
     environment:
       POSTGRES_USER: zoo
@@ -81,14 +86,11 @@ services:
     volumes:
       # Load the zoo kernel schema
       - ./assets/sql/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
-      # Load the async AMQP schema
       - ./assets/sql/async_amqp.sql:/docker-entrypoint-initdb.d/2-schema.sql
       - ./assets/sql/zoo_collectiondb.sql:/docker-entrypoint-initdb.d/3-schema.sql
-    depends_on:
-      - rabbitmq
   pgbouncer:
-    #platform: linux/amd64
-    image: edoburu/pgbouncer:1.12.0
+    platform: linux/amd64
+    image: edoburu/pgbouncer:1.8.1
     environment:
       DATABASE_URL: "postgres://zoo:zoo@pg/zoo"
       MAX_CLIENT_CONN: 1000
