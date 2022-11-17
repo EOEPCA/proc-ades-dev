@@ -10,7 +10,7 @@ chmod 777 -R /tmp/zTmp
 CMD="curl -o toto.out http://rabbitmq:15672"
 $CMD
 cat toto.out
-if [ -e toto.out ]; then echo "Should start" ; else echo wait; sleep 1; $CMD ; fi 
+if [ -e toto.out ]; then echo "Should start" ; else echo wait; sleep 1; $CMD ; fi
 
 while [ ! -e toto.out ]; do echo wait; sleep 1; $CMD ;  done
 
