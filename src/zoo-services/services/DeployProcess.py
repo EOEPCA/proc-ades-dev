@@ -148,7 +148,7 @@ class DeployService(object):
 
     def generate_service(self):
 
-
+        path=None
         print(self.conf["lenv"],file=sys.stderr)
         if "noRunSql" in self.conf["lenv"]:
             # checking if the template location is remote or local
@@ -171,19 +171,19 @@ class DeployService(object):
                     f"{self.cookiecutter_template_url} is not a valid git repo"
                 )
 
-        cookiecutter_values = {"service_name": self.service_configuration.identifier,
-                              "workflow_id": self.service_configuration.identifier,
-                              "conf": self.conf["cookiecutter"]}
+            cookiecutter_values = {"service_name": self.service_configuration.identifier,
+                                  "workflow_id": self.service_configuration.identifier,
+                                  "conf": self.conf["cookiecutter"]}
 
-        # Create project from template
-        path = cookiecutter(
-            template_folder,
-            extra_context=cookiecutter_values,
-            output_dir=self.service_tmp_folder,
-            no_input=True,
-            overwrite_if_exists=True,
-            config_file=self.cookiecutter_configuration_file
-        )
+            # Create project from template
+            path = cookiecutter(
+                template_folder,
+                extra_context=cookiecutter_values,
+                output_dir=self.service_tmp_folder,
+                no_input=True,
+                overwrite_if_exists=True,
+                config_file=self.cookiecutter_configuration_file
+            )
 
         if "metadb" not in self.conf:
             zcfg_file = os.path.join(

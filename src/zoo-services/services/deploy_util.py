@@ -252,7 +252,7 @@ class Process:
                                         ");")
                 if input.default_value:
                     cur.execute("UPDATE CollectionDB.LiteralDataDomain"+
-                                    "set default_value = $q${0}$q$ ".format(input.default_value)+
+                                    " set default_value = $q${0}$q$ ".format(input.default_value)+
                                     " WHERE id = "+
                                     "  ((SELECT last_value FROM CollectionDB.ows_DataDescription_id_seq));")
 
