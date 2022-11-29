@@ -58,11 +58,7 @@ class UndeployService(object):
 
 
     def get_process_identifier(self):
-
-        if "REQUEST_URI" not in self.conf["renv"].keys():
-            raise ValueError("REQUEST_URI is missing")
-
-        process_identifier = self.conf["renv"]["REQUEST_URI"].split('/')[-1]
+        process_identifier = self.conf["lenv"]["deployedServiceId"]
         return process_identifier
 
 
@@ -88,11 +84,12 @@ class UndeployService(object):
 
 
 def UndeployProcess(conf, inputs, outputs):
+    try:
+        undeploy_process = UndeployService(conf, inputs, outputs)
 
-    undeploy_process = UndeployService(conf, inputs, outputs)
+        undeploy_process.remove_service()
 
-    undeploy_process.remove_service()
-    print(zoo.SERVICE_UNDEPLOYED,file=sys.stderr)
-
-    return zoo.SERVICE_UNDEPLOYED
-    #return zoo.SERVICE_SUCCEEDED
+        return zoo.SERVICE_UNDEPLOYED
+    except Exception as err:
+        conf["lenv"]["message"]=str(err)
+        return zoo.SERVICE_FAILED

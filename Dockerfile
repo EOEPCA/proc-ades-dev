@@ -94,6 +94,9 @@ RUN cd ./zoo-project/zoo-kernel \
      && cp zoo_loader.cgi /usr/lib/cgi-bin \
      && cp zoo_loader_fpm /usr/lib/cgi-bin \
      && cp oas.cfg /usr/lib/cgi-bin \
+     && cd ../zoo-services/utils/security/basicAuth \
+     && make \
+     && make install \
      && sed -i "s%http://www.zoo-project.org/zoo/%http://127.0.0.1%g" /usr/lib/cgi-bin/main.cfg \
      && sed -i "s%../tmpPathRelativeToServerAdress/%http://localhost/temp/%g" /usr/lib/cgi-bin/main.cfg \
      && echo "\n[env]\nPYTHONPATH=/usr/miniconda3/envs/ades-dev/lib/python${PY_VER}/site-packages"\
