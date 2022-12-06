@@ -78,7 +78,10 @@ class DeployService(object):
 
         self.cwl_content = self.get_application_package()
 
-        self.service_configuration = Process.create_from_cwl(self.cwl_content,self.conf["lenv"]["workflow_id"])
+        if "workflow_id" in self.conf["lenv"]:
+            self.service_configuration = Process.create_from_cwl(self.cwl_content,self.conf["lenv"]["workflow_id"])
+        else:
+            self.service_configuration = Process.create_from_cwl(self.cwl_content)
 
         self.service_configuration.service_provider = (
             f"{self.service_configuration.identifier}.service"
