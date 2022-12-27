@@ -50,7 +50,7 @@ class Process:
             workflow = workflows[0]
         else:
             workflow = next(
-                (wf for wf in workflows if wf.id == workflow_id), None
+                (wf for wf in workflows if wf.id.split("#")[1] == workflow_id), None
             )
             if workflow is None:
                 raise Exception("Workflow '{0}' not found".format(workflow_id))
@@ -252,7 +252,7 @@ class Process:
                                         ");")
                 if input.default_value:
                     cur.execute("UPDATE CollectionDB.LiteralDataDomain"+
-                                    "set default_value = $q${0}$q$ ".format(input.default_value)+
+                                    " set default_value = $q${0}$q$ ".format(input.default_value)+
                                     " WHERE id = "+
                                     "  ((SELECT last_value FROM CollectionDB.ows_DataDescription_id_seq));")
 
