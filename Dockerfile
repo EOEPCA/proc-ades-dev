@@ -15,11 +15,18 @@ RUN apt-get update -qqy --no-install-recommends \
  && apt-get install -qqy --no-install-recommends wget mlocate tree \
 # C++ and CMAKE
  gcc mono-mcs cmake \
- build-essential libcgicc-dev gdb
+ build-essential libcgicc-dev gdb \
+#Install Docker CE CLI
+ curl apt-transport-https ca-certificates gnupg2 lsb-release \
+ && curl -fsSL https://download.docker.com/linux/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/gpg | apt-key add - 2>/dev/null \
+ && echo "deb [arch=amd64] https://download.docker.com/linux/$(lsb_release -is | tr '[:upper:]' '[:lower:]') $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list \
+ && apt-get update -qqy --no-install-recommends \
+ && apt-get install -qqy --no-install-recommends docker-ce-cli && \
+ apt-get clean -qqy
 
 ARG PY_VER=3.8
 # Miniconda
-RUN wget -nv --no-check-certificate \
+RUN wget -nv \
     https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh \
     && bash Miniconda3-py39_4.10.3-Linux-x86_64.sh -b -p /usr/miniconda3 \
     && rm -f Miniconda3-py39_4.10.3-Linux-x86_64.sh
@@ -32,7 +39,7 @@ RUN conda install mamba -n base -c conda-forge && \
 ########################################
 # ZOO_Prerequisites
 
-RUN apt-get update -qqy --no-install-recommends && apt-get install -qqy --no-install-recommends  software-properties-common && \
+RUN apt-get install -qqy --no-install-recommends  software-properties-common && \
 add-apt-repository ppa:ubuntugis/ubuntugis-unstable && \
 add-apt-repository ppa:ubuntugis/ppa && \
 apt-get update -qqy  --no-install-recommends && \
@@ -87,9 +94,6 @@ RUN cd ./zoo-project/zoo-kernel \
      && cp zoo_loader.cgi /usr/lib/cgi-bin \
      && cp zoo_loader_fpm /usr/lib/cgi-bin \
      && cp oas.cfg /usr/lib/cgi-bin \
-     && cd ../zoo-services/utils/security/basicAuth \
-     && make \
-     && make install \
      && sed -i "s%http://www.zoo-project.org/zoo/%http://127.0.0.1%g" /usr/lib/cgi-bin/main.cfg \
      && sed -i "s%../tmpPathRelativeToServerAdress/%http://localhost/temp/%g" /usr/lib/cgi-bin/main.cfg \
      && echo "\n[env]\nPYTHONPATH=/usr/miniconda3/envs/ades-dev/lib/python${PY_VER}/site-packages"\
