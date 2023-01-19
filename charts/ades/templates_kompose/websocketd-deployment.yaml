@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o charts/ades/templates_kompose/
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: websocketd
+  name: websocketd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: websocketd
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml -o charts/ades/templates_kompose/
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: websocketd
+    spec:
+      containers:
+        - args:
+            - --port=8888
+            - /shell.py
+          env:
+            - name: ZOO_REDIS_HOST
+              value: redis
+          image: websocketd
+          name: websocketd
+          ports:
+            - containerPort: 8888
+          resources: {}
+          volumeMounts:
+            - mountPath: /shell.py
+              name: websocketd-claim0
+      restartPolicy: Always
+      volumes:
+        - name: websocketd-claim0
+          persistentVolumeClaim:
+            claimName: websocketd-claim0
+status: {}

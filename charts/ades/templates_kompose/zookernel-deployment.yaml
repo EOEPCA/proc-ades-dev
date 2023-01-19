@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o charts/ades/templates_kompose/
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: zookernel
+  name: zookernel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: zookernel
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml -o charts/ades/templates_kompose/
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: zookernel
+    spec:
+      containers:
+        - env:
+            - name: ZOO_REDIS_HOST
+              value: redis
+          image: ades:latest
+          name: zookernel
+          ports:
+            - containerPort: 80
+          resources: {}
+          volumeMounts:
+            - mountPath: /usr/lib/cgi-bin/main.cfg
+              name: zookernel-claim0
+            - mountPath: /usr/lib/cgi-bin/oas.cfg
+              name: zookernel-claim1
+            - mountPath: /var/www/html/.htaccess
+              name: zookernel-claim2
+            - mountPath: /assets
+              name: zookernel-claim3
+            - mountPath: /tmp/cookiecutter_config.yaml
+              name: zookernel-claim4
+            - mountPath: /usr/lib/cgi-bin/DeployProcess.py
+              name: zookernel-claim5
+            - mountPath: /usr/lib/cgi-bin/DeployProcess.zcfg
+              name: zookernel-claim6
+            - mountPath: /usr/lib/cgi-bin/UndeployProcess.py
+              name: zookernel-claim7
+            - mountPath: /usr/lib/cgi-bin/UndeployProcess.zcfg
+              name: zookernel-claim8
+            - mountPath: /usr/lib/cgi-bin/deploy_util.py
+              name: zookernel-claim9
+            - mountPath: /usr/lib/cgi-bin/HelloPy.zcfg
+              name: zookernel-claim10
+            - mountPath: /usr/lib/cgi-bin/test_service.py
+              name: zookernel-claim11
+      restartPolicy: Always
+      volumes:
+        - name: zookernel-claim0
+          persistentVolumeClaim:
+            claimName: zookernel-claim0
+        - name: zookernel-claim1
+          persistentVolumeClaim:
+            claimName: zookernel-claim1
+        - name: zookernel-claim2
+          persistentVolumeClaim:
+            claimName: zookernel-claim2
+        - name: zookernel-claim3
+          persistentVolumeClaim:
+            claimName: zookernel-claim3
+        - name: zookernel-claim4
+          persistentVolumeClaim:
+            claimName: zookernel-claim4
+        - name: zookernel-claim5
+          persistentVolumeClaim:
+            claimName: zookernel-claim5
+        - name: zookernel-claim6
+          persistentVolumeClaim:
+            claimName: zookernel-claim6
+        - name: zookernel-claim7
+          persistentVolumeClaim:
+            claimName: zookernel-claim7
+        - name: zookernel-claim8
+          persistentVolumeClaim:
+            claimName: zookernel-claim8
+        - name: zookernel-claim9
+          persistentVolumeClaim:
+            claimName: zookernel-claim9
+        - name: zookernel-claim10
+          persistentVolumeClaim:
+            claimName: zookernel-claim10
+        - name: zookernel-claim11
+          persistentVolumeClaim:
+            claimName: zookernel-claim11
+status: {}
