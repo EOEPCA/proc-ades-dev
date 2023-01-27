@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "ades.fullname" . }}-zoofpm
+  labels:
+    {{- if .Chart.AppVersion }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    {{- end }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "ades.name" . }}-zoofpm
+    app.kubernetes.io/instance: {{ .Release.Name }}-zoofpm
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "ades.name" . }}-zoofpm
+      app.kubernetes.io/instance: {{ .Release.Name }}-zoofpm
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ include "ades.name" . }}-zoofpm
+        app.kubernetes.io/instance: {{ .Release.Name }}-zoofpm
+    spec:
+      initContainers:
+        - name: init-wait-for-dependencies
+          image: docker.io/wshihadeh/wait_for:latest
+          command: [ "/docker-entrypoint.sh" ]
+          args: [ "wait_for", "rabbitmq:{{ .Release.Name }}-rabbitmq"]
+          env:
+            - name: ZOO_RABBITMQ_HOST
+              value: {{ .Release.Name }}-rabbitmq
+      containers:
+        - env:
+            - name: ZOO_RABBITMQ_HOST
+              value: {{ .Release.Name }}-rabbitmq
+            {{- if .Values.postgresql.enabled }}
+            - name: PGHOST
+              value: "{{ .Release.Name}}-postgresql-hl"
+            - name: PGDATABASE
+              value: {{ .Values.postgresql.global.postgresql.postgresqlDatabase | quote}}
+            - name: PGPASSWORD
+              value: {{ .Values.postgresql.global.postgresql.postgresqlPassword | quote}}
+            - name: PGUSER
+              value: {{ .Values.postgresql.global.postgresql.postgresqlUsername | quote}}
+            - name: PGPORT
+              value: {{ .Values.postgresql.global.postgresql.servicePort | quote}}
+            {{- end }}
+          image: eoepca/proc-ades:dev3.0.0
+          name: zoofpm
+          resources: {}
+          volumeMounts:
+            - name: ades-config
+              mountPath: /usr/lib/cgi-bin/main.cfg
+              subPath: maincfg
+            - name: ades-config
+              mountPath: /usr/lib/cgi-bin/oas.cfg
+              subPath: oas
+            - name: ades-config
+              mountPath: /var/www/html/.htaccess
+              subPath: htaccess
+            - name: startupsh
+              mountPath: /startup.sh
+              subPath: startUp.sh
+          command: ["/startup.sh"]
+      restartPolicy: Always
+      volumes:
+        - name: ades-config
+          configMap:
+            name: {{ template "ades.fullname" . }}-configmap
+
+        - name: startupsh
+          configMap:
+            name: {{ template "ades.fullname" . }}-startup-configmap
+            defaultMode: 0744
+
+        - name: zookernel-claim0
+          persistentVolumeClaim:
+            claimName: zookernel-claim0
+status: {}

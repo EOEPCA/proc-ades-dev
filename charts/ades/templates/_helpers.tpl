@@ -1,4 +1,4 @@
-{{/*
+x\{{/*
 Expand the name of the chart.
 */}}
 {{- define "ades.name" -}}

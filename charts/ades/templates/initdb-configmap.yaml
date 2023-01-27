@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-primary-init-scripts
+data:
+  1-schema.sql: {{ tpl (.Files.Get "files/postgres/schema.sql") . | quote }}
+  2-schema.sql: {{ tpl (.Files.Get "files/postgres/async_amqp.sql") . | quote }}
+  3-schema.sql: {{ tpl (.Files.Get "files/postgres/zoo_collectiondb.sql") . | quote }}

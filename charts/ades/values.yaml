@@ -82,10 +82,88 @@ tolerations: []
 affinity: {}
 
 
+redis:
+  replica:
+    replicaCount: 1
+
+
+zoo:
+  kernel:
+    maincfgtpl: "files/zoo-kernel/main.cfg.tpl"
+    oas: "files/zoo-kernel/oas.cfg"
+    htaccess: "files/zoo-kernel/htaccess"
+  openapi:
+    startupsh: "files/openapi/server/startUp.sh"
+  rabbitmq:
+    definitions: "files/rabbitmq/definitions.json"
+
 
 
 postgresql:
+  enabled: true
+  primary:
+    initdb:
+      scriptsConfigMap: "postgresql-primary-init-scripts"
+
+global:
+  postgresql:
+    auth:
+      username: zoo
+      password: zoo
+      database: zoo
+
+    service:
+      ports:
+        postgresql: "5432"
+
+# rabbitmq
+rabbitmq:
   auth:
-    username: zoos
-    password: zoo
-    database: zoo
+    username: RABBITMQ_USERNAME
+#    password: RABBITMQ_PASSWORD
+#    erlangCookie: RABBITMQ_ERLANG_COOKIE
+#  loadDefinition:
+#    enable: true
+#    existingSecret: load-definition
+#  extraConfiguration: |
+#    load_definitions = /app/load_definition.json
+
+    password: CHANGEME
+  loadDefinition:
+    enabled: true
+    existingSecret: load-definition
+  extraConfiguration: |
+    load_definitions = /app/load_definition.json
+
+
+
+
+
+pgbouncer:
+  replicaCount: 1
+  verbose: 1
+  users:
+    dbuser: zoo
+  databases:
+    postgres:
+      host: pg
+      port: 5432
+      user: zoo
+      dbname: zoo
+  connectionLimits:
+    defaultPoolSize: 100
+#    minPoolSize: 20
+#    reservePoolSize: 20
+
+
+#    image: edoburu/pgbouncer:1.8.1
+#    environment:
+#      DATABASE_URL: "postgres://zoo:zoo@pg/zoo"
+#      MAX_CLIENT_CONN: 1000
+#      MAX_DB_CONNECTIONS: 100
+#      DEFAULT_POOL_SIZE: 100
+#      POOL_MODE: transaction
+#    ports:
+#      - "5432:5432"
+#    depends_on:
+#      - pg
