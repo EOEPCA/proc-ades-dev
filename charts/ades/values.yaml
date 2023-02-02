@@ -2,13 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
-
-image:
-  repository: nginx
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
 
 imagePullSecrets: []
 nameOverride: ""
@@ -22,6 +15,11 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
+
+
+useKubeProxy: true
+clusterAdminRoleName: cluster-admin
+
 
 podAnnotations: {}
 
@@ -96,13 +94,49 @@ zoo:
     startupsh: "files/openapi/server/startUp.sh"
   rabbitmq:
     definitions: "files/rabbitmq/definitions.json"
+  services:
+    deployutil_py: "files/zoo-services/services/deploy_util.py"
+    deployprocess_zcfg: "files/zoo-services/services/DeployProcess.zcfg"
+    deployprocess_py: "files/zoo-services/services/DeployProcess.py"
+    undeployprocess_zcfg: "files/zoo-services/services/UndeployProcess.zcfg"
+    undeployprocess_py: "files/zoo-services/services/UndeployProcess.py"
+    cookiecutter_config: "files/zoo-services/assets/cookiecutter_config.yaml"
 
+zoofpm:
+  image:
+    repository: eoepca/proc-ades
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: dev3.0.0
+  autoscaling:
+    enabled: false
+  replicaCount: 1
+
+
+zookernel:
+  image:
+    repository: eoepca/proc-ades
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: dev3.0.0
+
+
+workflow:
+  storageClass: standard
+  inputs:
+    APP: ades
+    AWS_REGION: fr-par
+    AWS_ACCESS_KEY_ID: my_access_key
+    AWS_SECRET_ACCESS_KEY: my_secret_access_key
+    AWS_SERVICE_URL: https://s3endpoint.cloud
+    ADES_STAGEOUT_OUTPUT: s3://eoepca-ades
 
 
 postgresql:
   enabled: true
   primary:
     initdb:
+      scriptsConfigMap: "postgresql-primary-init-scripts"
       scriptsConfigMap: "postgresql-primary-init-scripts"
 
 global:
@@ -120,14 +154,6 @@ global:
 rabbitmq:
   auth:
     username: RABBITMQ_USERNAME
-#    password: RABBITMQ_PASSWORD
-#    erlangCookie: RABBITMQ_ERLANG_COOKIE
-#  loadDefinition:
-#    enable: true
-#    existingSecret: load-definition
-#  extraConfiguration: |
-#    load_definitions = /app/load_definition.json
-
     password: CHANGEME
   loadDefinition:
     enabled: true
@@ -136,34 +162,16 @@ rabbitmq:
     load_definitions = /app/load_definition.json
 
 
+persistence:
+  enabled: true
+  # existingUserDataClaim:
+  # existingProcServicesClaim:
+  storageClass: standard
+  userDataAccessMode: ReadWriteOnce
+  userDataSize: 10Gi
+  procServicesAccessMode: ReadWriteOnce
+  procServicesSize: 5Gi
+  servicesNamespacePath: /opt/zooservices_user
 
-
-
-pgbouncer:
-  replicaCount: 1
-  verbose: 1
-  users:
-    dbuser: zoo
-  databases:
-    postgres:
-      host: pg
-      port: 5432
-      user: zoo
-      dbname: zoo
-  connectionLimits:
-    defaultPoolSize: 100
-#    minPoolSize: 20
-#    reservePoolSize: 20
-
-
-#    image: edoburu/pgbouncer:1.8.1
-#    environment:
-#      DATABASE_URL: "postgres://zoo:zoo@pg/zoo"
-#      MAX_CLIENT_CONN: 1000
-#      MAX_DB_CONNECTIONS: 100
-#      DEFAULT_POOL_SIZE: 100
-#      POOL_MODE: transaction
-#    ports:
-#      - "5432:5432"
-#    depends_on:
-#      - pg
+cookiecutter:
+  templateUrl: https://github.com/EOEPCA/proc-service-template.git

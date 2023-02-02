@@ -11,4 +11,10 @@ data:
   maincfg: {{ tpl (.Files.Get .Values.zoo.kernel.maincfgtpl) . | quote }}
   oas: {{ tpl (.Files.Get .Values.zoo.kernel.oas) . | quote }}
   htaccess: {{ tpl (.Files.Get .Values.zoo.kernel.htaccess) . | quote }}
-
+  deployutil_py: {{ tpl (.Files.Get .Values.zoo.services.deployutil_py) . | quote }}
+  deployprocess_zcfg: {{ tpl (.Files.Get .Values.zoo.services.deployprocess_zcfg) . | quote }}
+  deployprocess_py: {{ tpl (.Files.Get .Values.zoo.services.deployprocess_py) . | quote }}
+  undeployprocess_zcfg: {{ tpl (.Files.Get .Values.zoo.services.undeployprocess_zcfg) . | quote }}
+  undeployprocess_py: {{ tpl (.Files.Get .Values.zoo.services.undeployprocess_py) . | quote }}
+  cookiecutter_config: {{ tpl (.Files.Get .Values.zoo.services.cookiecutter_config) . | quote }}
+  wfinputs.yaml: {{ toYaml .Values.workflow.inputs | quote }}

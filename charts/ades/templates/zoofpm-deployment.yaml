@@ -10,8 +10,8 @@ metadata:
     app.kubernetes.io/name: {{ include "ades.name" . }}-zoofpm
     app.kubernetes.io/instance: {{ .Release.Name }}-zoofpm
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  {{- if not .Values.zoofpm.autoscaling.enabled }}
+  replicas: {{ .Values.zoofpm.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
@@ -29,9 +29,11 @@ spec:
         app.kubernetes.io/name: {{ include "ades.name" . }}-zoofpm
         app.kubernetes.io/instance: {{ .Release.Name }}-zoofpm
     spec:
+      serviceAccountName: {{ include "ades.fullname" . }}-processing-manager
       initContainers:
         - name: init-wait-for-dependencies
           image: docker.io/wshihadeh/wait_for:latest
+          imagePullPolicy: IfNotPresent
           command: [ "/docker-entrypoint.sh" ]
           args: [ "wait_for", "rabbitmq:{{ .Release.Name }}-rabbitmq"]
           env:
@@ -41,6 +43,16 @@ spec:
         - env:
             - name: ZOO_RABBITMQ_HOST
               value: {{ .Release.Name }}-rabbitmq
+            - name: STORAGE_CLASS
+              value: {{ .Values.workflow.storageClass }}
+            {{- if .Values.useKubeProxy }}
+            - name: HTTP_PROXY
+              value: "http://{{ include "ades.fullname" . }}-kubeproxy:8001"
+            {{- else }}
+            - name: KUBECONFIG
+              value: /var/etc/ades/kubeconfig
+            {{- end }}
+
             {{- if .Values.postgresql.enabled }}
             - name: PGHOST
               value: "{{ .Release.Name}}-postgresql-hl"
@@ -53,8 +65,17 @@ spec:
             - name: PGPORT
               value: {{ .Values.postgresql.global.postgresql.servicePort | quote}}
             {{- end }}
-          image: eoepca/proc-ades:dev3.0.0
+
+            {{- range $k, $v := .Values.workflow.inputs }}
+            - name: {{ $k }}
+              value: {{ $v }}
+            {{- end }}
+
+
           name: zoofpm
+          image: "{{ .Values.zoofpm.image.repository }}:{{ .Values.zoofpm.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.zoofpm.image.pullPolicy }}
+          command: ["/startup.sh"]
           resources: {}
           volumeMounts:
             - name: ades-config
@@ -69,19 +90,67 @@ spec:
             - name: startupsh
               mountPath: /startup.sh
               subPath: startUp.sh
-          command: ["/startup.sh"]
+            - name: ades-config
+              mountPath: /usr/lib/cgi-bin/deploy_util.py
+              subPath: deployutil_py
+            - name: ades-config
+              mountPath: /usr/lib/cgi-bin/DeployProcess.zcfg
+              subPath: deployprocess_zcfg
+            - name: ades-config
+              mountPath: /usr/lib/cgi-bin/DeployProcess.py
+              subPath: deployprocess_py
+            - name: ades-config
+              mountPath: /usr/lib/cgi-bin/UndeployProcess.zcfg
+              subPath: undeployprocess_zcfg
+            - name: ades-config
+              mountPath: /usr/lib/cgi-bin/UndeployProcess.py
+              subPath: undeployprocess_py
+            - name: ades-config
+              mountPath: /tmp/cookiecutter_config.yaml
+              subPath: cookiecutter_config
+            - name: cwlwrapper-config
+              mountPath: /assets/maincwl.yaml
+              subPath: maincwl
+            - name: cwlwrapper-config
+              mountPath: /assets/maincwlmetrics.yaml
+              subPath: maincwlmetrics
+            - name: cwlwrapper-config
+              mountPath: /assets/rules.yaml
+              subPath: rules
+            - name: cwlwrapper-config
+              mountPath: /assets/stagein.yaml
+              subPath: stagein
+            - name: cwlwrapper-config
+              mountPath: /assets/stageout.yaml
+              subPath: stageout
+            - name: ades-processing-services
+              mountPath: {{ .Values.persistence.servicesNamespacePath }}
+
       restartPolicy: Always
       volumes:
         - name: ades-config
           configMap:
             name: {{ template "ades.fullname" . }}-configmap
-
+        - name: cwlwrapper-config
+          configMap:
+            name: {{ template "ades.fullname" . }}-cwlwrapper-configmap
         - name: startupsh
           configMap:
             name: {{ template "ades.fullname" . }}-startup-configmap
             defaultMode: 0744
-
         - name: zookernel-claim0
           persistentVolumeClaim:
             claimName: zookernel-claim0
+
+        - name: ades-processing-services
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            {{- if .Values.persistence.existingProcessingServicesClaim }}
+            claimName: {{ .Values.persistence.existingProcessingServicesClaim }}
+            {{- else }}
+            claimName: {{ template "ades.fullname" . }}-processing-services
+            {{- end -}}
+          {{- else }}
+          emptyDir: { }
+          {{- end }}
 status: {}

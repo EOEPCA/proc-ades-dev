@@ -42,7 +42,7 @@ dbname=zoo
 port=5432
 user=zoo
 password=zoo
-host=pgbouncer
+host={{ .Release.Name }}-postgresql
 type=PG
 schema=public
 
@@ -51,7 +51,7 @@ dbname=zoo
 port=5432
 user=zoo
 password=zoo
-host=pgbouncer
+host={{ .Release.Name }}-postgresql
 type=PG
 schema=public
 
@@ -62,11 +62,11 @@ attributes=Accept-Language
 [cookiecutter]
 configurationFile=/tmp/cookiecutter_config.yaml
 templatesPath=/tmp/cookiecutter-templates
-templateUrl=https://github.com/bbrauzzi/proc-service-template.git
+templateUrl={{ .Values.cookiecutter.templateUrl }}
 
 
 [servicesNamespace]
-path=/opt/zooservices_namespaces
+path= {{ .Values.persistence.servicesNamespacePath }}
 deploy_service_provider=DeployProcess
 undeploy_service_provider=UndeployProcess
 

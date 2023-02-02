@@ -5,9 +5,7 @@ metadata:
   labels:
     {{- include "ades.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
+  replicas: 1
   selector:
     matchLabels:
       {{- include "ades.selectorLabels" . | nindent 6 }}
@@ -25,6 +23,7 @@ spec:
       initContainers:
         - name: init-wait-for-dependencies
           image: docker.io/wshihadeh/wait_for:latest
+          imagePullPolicy: IfNotPresent
           command: [ "/docker-entrypoint.sh" ]
           args: [ "wait_for", "rabbitmq:{{ .Release.Name }}-rabbitmq" ]
           env:
@@ -33,9 +32,10 @@ spec:
       containers:
         - env:
             - name: ZOO_REDIS_HOST
-              value: redis
-          image: eoepca/proc-ades:dev3.0.0
+              value: {{ template "ades.fullname" . }}-redis-master
           name: zookernel
+          image: "{{ .Values.zookernel.image.repository }}:{{ .Values.zookernel.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.zookernel.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 80
@@ -59,13 +59,41 @@ spec:
             - name: ades-config
               mountPath: /var/www/html/.htaccess
               subPath: htaccess
+            - name: ades-config
+              mountPath: /usr/lib/cgi-bin/deploy_util.py
+              subPath: deployutil_py
+            - name: ades-config
+              mountPath: /usr/lib/cgi-bin/DeployProcess.zcfg
+              subPath: deployprocess_zcfg
+            - name: ades-config
+              mountPath: /usr/lib/cgi-bin/DeployProcess.py
+              subPath: deployprocess_py
+            - name: ades-config
+              mountPath: /usr/lib/cgi-bin/UndeployProcess.zcfg
+              subPath: undeployprocess_zcfg
+            - name: ades-config
+              mountPath: /usr/lib/cgi-bin/UndeployProcess.py
+              subPath: undeployprocess_py
+            - name: ades-config
+              mountPath: /tmp/cookiecutter_config.yaml
+              subPath: cookiecutter_config
+            - name: ades-processing-services
+              mountPath: {{ .Values.persistence.servicesNamespacePath }}
 
       restartPolicy: Always
       volumes:
         - name: ades-config
           configMap:
             name: {{ template "ades.fullname" . }}-configmap
-        - name: zookernel-claim0
+        - name: ades-processing-services
+          {{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: zookernel-claim0
+            {{- if .Values.persistence.existingProcessingServicesClaim }}
+            claimName: {{ .Values.persistence.existingProcessingServicesClaim }}
+            {{- else }}
+            claimName: {{ template "ades.fullname" . }}-processing-services
+            {{- end -}}
+          {{- else }}
+          emptyDir: { }
+          {{- end }}
 status: {}

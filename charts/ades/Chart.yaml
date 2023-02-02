@@ -38,6 +38,3 @@ dependencies:
     version: "17.6.0"
     repository: https://charts.bitnami.com/bitnami
 
-  - name: pgbouncer
-    version: "1.0.15"
-    repository: https://raw.githubusercontent.com/cradlepoint/kubernetes-helm-chart-pgbouncer/master/repos/stable
