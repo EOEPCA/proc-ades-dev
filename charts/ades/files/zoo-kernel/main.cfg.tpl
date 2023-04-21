@@ -56,8 +56,8 @@ type=PG
 schema=public
 
 [security]
-hosts=http://localhost
-attributes=Accept-Language
+attributes=Authorization,Cookie,User-Agent
+hosts=*
 
 [cookiecutter]
 configurationFile=/tmp/cookiecutter_config.yaml

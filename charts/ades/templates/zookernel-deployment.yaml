@@ -21,7 +21,7 @@ spec:
         {{- include "ades.selectorLabels" . | nindent 8 }}
     spec:
       initContainers:
-        - name: init-wait-for-dependencies
+        - name: init-wait-for-dependencies-zookernel
           image: docker.io/wshihadeh/wait_for:latest
           imagePullPolicy: IfNotPresent
           command: [ "/docker-entrypoint.sh" ]

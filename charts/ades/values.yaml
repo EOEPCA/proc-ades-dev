@@ -137,7 +137,6 @@ postgresql:
   primary:
     initdb:
       scriptsConfigMap: "postgresql-primary-init-scripts"
-      scriptsConfigMap: "postgresql-primary-init-scripts"
 
 global:
   postgresql:
