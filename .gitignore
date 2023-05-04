@@ -14,3 +14,9 @@ profile_default/
 ipython_config.py
 
 docker/tmp
+/charts/ades/charts/pgbouncer-1.0.15.tgz
+/charts/ades/charts/postgresql-12.1.9.tgz
+/charts/ades/charts/rabbitmq-11.5.0.tgz
+/charts/ades/charts/redis-17.6.0.tgz
+/charts/ades/Chart.lock
+/charts/ades/templates_kompose/

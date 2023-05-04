@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "ades.fullname" . }}-cwlwrapper-configmap
+data:
+  maincwl: {{ .Files.Get "files/cwlwrapper-assets/maincwl.yaml" | quote }}
+  maincwlmetrics: {{ .Files.Get "files/cwlwrapper-assets/maincwlmetrics.yaml" | quote }}
+  rules: {{ .Files.Get "files/cwlwrapper-assets/rules.yaml" | quote }}
+  stagein: {{ .Files.Get "files/cwlwrapper-assets/stagein.yaml" | quote }}
+  stageout: {{ .Files.Get "files/cwlwrapper-assets/stageout.yaml" | quote }}
