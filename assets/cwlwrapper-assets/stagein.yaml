@@ -40,11 +40,5 @@ requirements:
       AWS__AuthenticationRegion: $(inputs.ADES_STAGEIN_AWS_REGION)
       AWS_ACCESS_KEY_ID: $(inputs.ADES_STAGEIN_AWS_ACCESS_KEY_ID)
       AWS_SECRET_ACCESS_KEY: $(inputs.ADES_STAGEIN_AWS_SECRET_ACCESS_KEY)
-      "Credentials__StacCatalog__AuthType" : "Basic"
-      "Credentials__StacCatalog__UriPrefix" : "https://supervisor.{{ .Values.global.ingress.hostDomain }}"
-      "Credentials__StacCatalog__Username" : "stars"
-      "Credentials__StacCatalog__Password" : "89126578214hr87fh8g2389"
-      # STARS_URL_FIND: "https?://supervisor.charter.uat.esaportal.eu/catalog"
-      # STARS_URL_REPLACE: "http://acceptance-supervisor-catalog-stac.cpe/catalog"
   ResourceRequirement: {}
   InlineJavascriptRequirement: {}
