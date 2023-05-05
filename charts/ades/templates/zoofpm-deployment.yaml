@@ -45,6 +45,14 @@ spec:
               value: {{ .Release.Name }}-rabbitmq
             - name: STORAGE_CLASS
               value: {{ .Values.workflow.storageClass }}
+            - name: DEFAULT_VOLUME_SIZE
+              value: "{{ .Values.workflow.defaultVolumeSize }}"
+            - name: DEFAULT_MAX_RAM
+              value: "{{ .Values.workflow.defaultMaxRam }}"
+            - name: DEFAULT_MAX_CORES
+              value: "{{ .Values.workflow.defaultMaxCores }}"
+            - name: CALRISSIAN_IMAGE
+              value: "{{ .Values.workflow.calrissianImage }}"
             {{- if .Values.useKubeProxy }}
             - name: HTTP_PROXY
               value: "http://{{ include "ades.fullname" . }}-kubeproxy:8001"

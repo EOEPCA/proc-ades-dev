@@ -123,6 +123,11 @@ zookernel:
 
 workflow:
   storageClass: standard
+  defaultVolumeSize: 10190
+  defaultMaxRam: 1024
+  defaultMaxCores: 2
+  calrissianImage: "terradue/calrissian:0.12.0"
+
   inputs:
     APP: ades
     AWS_REGION: fr-par
