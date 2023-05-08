@@ -2,7 +2,7 @@ version: '3'
 services:
   zookernel:
 #    platform: linux/amd64
-    image: ades:latest
+    image: eoepca/proc-ades:dev3.0.2
     build: .
     ports:
       - "80:80"
@@ -28,7 +28,7 @@ services:
       - ZOO_REDIS_HOST=redis
   zoofpm:
     #   platform: linux/amd64
-    image: ades:latest
+    image: eoepca/proc-ades:dev3.0.2
     volumes:
       - ./assets/main.cfg:/usr/lib/cgi-bin/main.cfg
       - ./assets/oas.cfg:/usr/lib/cgi-bin/oas.cfg
