@@ -99,21 +99,6 @@ spec:
               mountPath: /startup.sh
               subPath: startUp.sh
             - name: ades-config
-              mountPath: /usr/lib/cgi-bin/deploy_util.py
-              subPath: deployutil_py
-            - name: ades-config
-              mountPath: /usr/lib/cgi-bin/DeployProcess.zcfg
-              subPath: deployprocess_zcfg
-            - name: ades-config
-              mountPath: /usr/lib/cgi-bin/DeployProcess.py
-              subPath: deployprocess_py
-            - name: ades-config
-              mountPath: /usr/lib/cgi-bin/UndeployProcess.zcfg
-              subPath: undeployprocess_zcfg
-            - name: ades-config
-              mountPath: /usr/lib/cgi-bin/UndeployProcess.py
-              subPath: undeployprocess_py
-            - name: ades-config
               mountPath: /tmp/cookiecutter_config.yaml
               subPath: cookiecutter_config
             - name: cwlwrapper-config

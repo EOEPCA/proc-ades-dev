@@ -86,7 +86,8 @@ WORKDIR /opt/ZOO-Project
 RUN make -C ./thirds/cgic206 libcgic.a
 RUN cd ./zoo-project/zoo-kernel \
      && autoconf \
-     && ./configure --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=$PY_VER --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr --with-metadb=yes --with-db-backend --with-rabbitmq=yes \
+     #&& grep MS_VERSION_ -rni /usr/ \
+     && ./configure --with-dru=yes --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=$PY_VER --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr --with-metadb=yes --with-db-backend --with-rabbitmq=yes \
      && sed -i "s/-DACCEPT_USE_OF_DEPRECATED_PROJ_API_H/-DPROJ_VERSION_MAJOR=8/g" ./ZOOMakefile.opts \
      && make -j4\
      && make install \
@@ -111,18 +112,18 @@ RUN cd ./zoo-project/zoo-kernel \
      && cp -r zoo-project/zoo-services/utils/open-api/templates/index.html /var/www/index.html \
      && cp -r zoo-project/zoo-services/utils/open-api/static /var/www/html/ \
      && cp zoo-project/zoo-services/utils/open-api/cgi-env/* /usr/lib/cgi-bin/ \
-     && cd thirds/zcfg2sql && \
-     grep CALLBACK ../../zoo-project/zoo-kernel/ZOOMakefile.opts && \
-     grep JSON ../../zoo-project/zoo-kernel/ZOOMakefile.opts && \
-     make && \
-     cp zcfg2sql /usr/bin && \
-     ln -s /tmp/ /var/www/html/temp && \
-     mkdir /var/www/html/examples/ && \
-     curl -o /var/www/html/examples/deployment-job.json https://raw.githubusercontent.com/EOEPCA/proc-ades/master/test/sample_apps/v2/snuggs/app-deploy-body.json && \
-     curl -o /var/www/html/examples/deployment-job1.json https://raw.githubusercontent.com/EOEPCA/proc-ades/1b55873dad2684f3333842aea77efb6fb33aa210/test/sample_apps/dNBR/app-deploy-body1.json && \
-     curl -o /var/www/html/examples/deployment-job2.json https://raw.githubusercontent.com/EOEPCA/proc-ades/master/test/sample_apps/v2/dNBR/app-deploy-body.json && \
-     curl -o /var/www/html/examples/deployment-job.yaml https://raw.githubusercontent.com/EOEPCA/app-snuggs/main/app-package.cwl && \
-     cd .. && rm -rf ZOO-Project
+     && ln -s /tmp/ /var/www/html/temp \
+     && mkdir /var/www/html/examples/ \
+     # update the securityIn.zcfg
+     && sed "s:serviceType = C:serviceType = Python:g;s:serviceProvider = security_service.zo:serviceProvider = service:g" -i /usr/lib/cgi-bin/securityIn.zcfg \
+     && curl -o /var/www/html/examples/deployment-job.json https://raw.githubusercontent.com/EOEPCA/proc-ades/master/test/sample_apps/v2/snuggs/app-deploy-body.json \
+     && curl -o /var/www/html/examples/deployment-job1.json https://raw.githubusercontent.com/EOEPCA/proc-ades/1b55873dad2684f3333842aea77efb6fb33aa210/test/sample_apps/dNBR/app-deploy-body1.json \
+     && curl -o /var/www/html/examples/deployment-job2.json https://raw.githubusercontent.com/EOEPCA/proc-ades/master/test/sample_apps/v2/dNBR/app-deploy-body.json \
+     && curl -o /var/www/html/examples/job_order1.json https://raw.githubusercontent.com/EOEPCA/proc-ades/master/test/sample_apps/v2/snuggs/app-execute-body.json \
+     && curl -o /var/www/html/examples/job_order2.json https://raw.githubusercontent.com/EOEPCA/proc-ades/master/test/sample_apps/v2/snuggs/app-execute-body2.json \
+     && curl -o /var/www/html/examples/job_order3.json https://raw.githubusercontent.com/EOEPCA/proc-ades/master/test/sample_apps/v2/snuggs/app-execute-body3.json \
+     && curl -o /var/www/html/examples//app-package.cwl https://raw.githubusercontent.com/EOEPCA/app-snuggs/main/app-package.cwl \
+     && cd .. && rm -rf ZOO-Project
 
 #
 # Install Swagger-ui
@@ -133,6 +134,11 @@ RUN git clone --depth 1 https://github.com/swagger-api/swagger-ui.git           
     mv /var/www/html/swagger-ui/dist /var/www/html/swagger-ui/oapip
 
 COPY assets/default.conf /etc/apache2/sites-available/000-default.conf
+COPY src/zoo-services/services/DeployProcess.py /usr/lib/cgi-bin
+COPY src/zoo-services/services/DeployProcess.zcfg /usr/lib/cgi-bin
+COPY src/zoo-services/services/UndeployProcess.py /usr/lib/cgi-bin
+COPY src/zoo-services/services/UndeployProcess.zcfg /usr/lib/cgi-bin
+COPY src/zoo-services/services/deploy_util.py /usr/lib/cgi-bin
 
 RUN chmod -R 777 /usr/lib/cgi-bin
 

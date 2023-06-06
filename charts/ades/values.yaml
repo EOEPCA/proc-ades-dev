@@ -95,11 +95,6 @@ zoo:
   rabbitmq:
     definitions: "files/rabbitmq/definitions.json"
   services:
-    deployutil_py: "files/zoo-services/services/deploy_util.py"
-    deployprocess_zcfg: "files/zoo-services/services/DeployProcess.zcfg"
-    deployprocess_py: "files/zoo-services/services/DeployProcess.py"
-    undeployprocess_zcfg: "files/zoo-services/services/UndeployProcess.zcfg"
-    undeployprocess_py: "files/zoo-services/services/UndeployProcess.py"
     cookiecutter_config: "files/zoo-services/assets/cookiecutter_config.yaml"
 
 zoofpm:
