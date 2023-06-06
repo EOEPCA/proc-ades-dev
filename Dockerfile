@@ -97,6 +97,7 @@ RUN cd ./zoo-project/zoo-kernel \
      && cp oas.cfg /usr/lib/cgi-bin \
     \
     # Install Basic Authentication sample
+    # TODO: is this still required?
     && cd ../zoo-services/utils/security/basicAuth \
     && make \
     && cp cgi-env/* /usr/lib/cgi-bin \
@@ -112,6 +113,7 @@ RUN cd ./zoo-project/zoo-kernel \
      && cp -r zoo-project/zoo-services/utils/open-api/templates/index.html /var/www/index.html \
      && cp -r zoo-project/zoo-services/utils/open-api/static /var/www/html/ \
      && cp zoo-project/zoo-services/utils/open-api/cgi-env/* /usr/lib/cgi-bin/ \
+     && cp zoo-project/zoo-services/utils/security/dru/* /usr/lib/cgi-bin/ \
      && ln -s /tmp/ /var/www/html/temp \
      && mkdir /var/www/html/examples/ \
      # update the securityIn.zcfg
@@ -128,10 +130,10 @@ RUN cd ./zoo-project/zoo-kernel \
 #
 # Install Swagger-ui
 #
-RUN git clone --depth 1 https://github.com/swagger-api/swagger-ui.git                                                     && \
-    mv swagger-ui /var/www/html/swagger-ui                                                                                && \
-    sed "s=https://petstore.swagger.io/v2/swagger.json=http://localhost/ogc-api/api=g" -i /var/www/html/swagger-ui/dist/* && \
-    mv /var/www/html/swagger-ui/dist /var/www/html/swagger-ui/oapip
+RUN git clone --depth 1 https://github.com/swagger-api/swagger-ui.git \
+    && mv swagger-ui /var/www/html/swagger-ui \
+    && sed "s=https://petstore.swagger.io/v2/swagger.json=http://localhost:8080/ogc-api/api=g" -i /var/www/html/swagger-ui/dist/* \
+    && mv /var/www/html/swagger-ui/dist /var/www/html/swagger-ui/oapip
 
 COPY assets/default.conf /etc/apache2/sites-available/000-default.conf
 COPY src/zoo-services/services/DeployProcess.py /usr/lib/cgi-bin
