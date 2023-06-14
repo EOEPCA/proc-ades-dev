@@ -3,10 +3,6 @@ name: Build and Publish Docker
 on:
   workflow_dispatch:
     inputs:
-      push:
-        description: 'Push to dockerhub'
-        type: boolean
-        default: false
 
 jobs:
   build-and-publish-docker:
