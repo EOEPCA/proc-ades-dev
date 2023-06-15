@@ -26,4 +26,35 @@ spec:
   resources:
     requests:
       storage:  {{ .Values.persistence.procServicesSize | quote }}
+
+---
+
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ template "ades.fullname" . }}-processing-tmp
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "ades.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- if .Values.persistence.annotations }}
+  annotations:
+{{ toYaml .Values.persistence.annotations | indent 4 }}
+{{- end }}
+spec:
+  accessModes:
+    - {{ .Values.persistence.procTmpAccessMode | quote }}
+{{- if .Values.persistence.storageClass }}
+{{- if (eq "-" .Values.persistence.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .Values.persistence.storageClass }}"
+{{- end }}
+{{- end }}
+  resources:
+    requests:
+      storage:  {{ .Values.persistence.procTmpSize | quote }}
 {{- end -}}

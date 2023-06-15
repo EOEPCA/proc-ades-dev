@@ -118,6 +118,8 @@ spec:
               subPath: stageout
             - name: ades-processing-services
               mountPath: {{ .Values.persistence.servicesNamespacePath }}
+            - name: ades-tmp
+              mountPath: /tmp
 
       restartPolicy: Always
       volumes:
@@ -139,6 +141,17 @@ spec:
             claimName: {{ .Values.persistence.existingProcessingServicesClaim }}
             {{- else }}
             claimName: {{ template "ades.fullname" . }}-processing-services
+            {{- end -}}
+          {{- else }}
+          emptyDir: { }
+          {{- end }}
+        - name: ades-tmp
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            {{- if .Values.persistence.existingProcessingTmpClaim }}
+            claimName: {{ .Values.persistence.existingProcessingTmpClaim }}-processing-tmp
+            {{- else }}
+            claimName: {{ template "ades.fullname" . }}-processing-tmp
             {{- end -}}
           {{- else }}
           emptyDir: { }

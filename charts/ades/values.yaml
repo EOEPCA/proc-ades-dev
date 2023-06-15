@@ -171,6 +171,10 @@ persistence:
   procServicesAccessMode: ReadWriteOnce
   procServicesSize: 5Gi
   servicesNamespacePath: /opt/zooservices_user
+  procTmpAccessMode: ReadWriteMany
+  procTmpSize: 5Gi
+  #existingProcessingTmpClaim
+
 
 cookiecutter:
   templateUrl: https://github.com/EOEPCA/proc-service-template.git
