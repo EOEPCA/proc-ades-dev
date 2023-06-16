@@ -24,7 +24,7 @@ clusterAdminRoleName: cluster-admin
 podAnnotations: {}
 
 podSecurityContext: {}
-  # fsGroup: 2000
+# fsGroup: 2000
 
 securityContext: {}
   # capabilities:
@@ -32,7 +32,7 @@ securityContext: {}
   #   - ALL
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
-  # runAsUser: 1000
+# runAsUser: 1000
 
 service:
   type: ClusterIP
@@ -61,7 +61,7 @@ resources: {}
   #   memory: 128Mi
   # requests:
   #   cpu: 100m
-  #   memory: 128Mi
+#   memory: 128Mi
 
 autoscaling:
   enabled: false
@@ -97,16 +97,19 @@ zoo:
   rabbitmq:
     definitions: "files/rabbitmq/definitions.json"
   services:
+    deployutil_py: "files/zoo-services/services/deploy_util.py"
+    deployprocess_zcfg: "files/zoo-services/services/DeployProcess.zcfg"
+    deployprocess_py: "files/zoo-services/services/DeployProcess.py"
+    undeployprocess_zcfg: "files/zoo-services/services/UndeployProcess.zcfg"
+    undeployprocess_py: "files/zoo-services/services/UndeployProcess.py"
     cookiecutter_config: "files/zoo-services/assets/cookiecutter_config.yaml"
 
 zoofpm:
   image:
     repository: eoepca/proc-ades
-    # For minkube local builds
-    #pullPolicy: Never
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: dev3.0.1
+    tag: dev3.0.2_6
   autoscaling:
     enabled: false
   replicaCount: 1
@@ -115,22 +118,20 @@ zoofpm:
 zookernel:
   image:
     repository: eoepca/proc-ades
-    # For minkube local builds
-    #pullPolicy: Never
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: dev3.0.1
+    tag: dev3.0.2_6
 
 
 workflow:
   storageClass: standard
   inputs:
     APP: ades
-    AWS_REGION: fr-par
-    AWS_ACCESS_KEY_ID: my_access_key
-    AWS_SECRET_ACCESS_KEY: my_secret_access_key
-    AWS_SERVICE_URL: https://s3endpoint.cloud
-    ADES_STAGEOUT_OUTPUT: s3://eoepca-ades
+    AWS_REGION: RegionOne
+    AWS_ACCESS_KEY_ID: minio
+    AWS_SECRET_ACCESS_KEY: minio123
+    AWS_SERVICE_URL: http://my-minio-fs.minio.svc.cluster.local:9000
+    ADES_STAGEOUT_OUTPUT: s3://processingresults
 
 
 postgresql:
