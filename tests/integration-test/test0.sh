@@ -231,7 +231,7 @@ testMonitoringDnbrApp(){
       sleep 20
     done
 
-  assertEquals "Succeeded" "$PROCESS_STATUS"
+  assertEquals "successful" "$PROCESS_STATUS"
 }
 
 
