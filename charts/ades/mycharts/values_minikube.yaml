@@ -109,7 +109,7 @@ zoofpm:
     repository: eoepca/proc-ades
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: dev3.0.2_8
+    tag: dev3.0.2_9
   autoscaling:
     enabled: false
   replicaCount: 1
@@ -120,7 +120,7 @@ zookernel:
     repository: eoepca/proc-ades
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: dev3.0.2_8
+    tag: dev3.0.2_9
 
 
 workflow:

@@ -23,7 +23,7 @@ oneTimeTearDown() {
 
   # MINIKUBE
   echo Deleting minikube
-  #minikube delete
+  minikube delete
 }
 
 testDeployingAdesHelmChart() {
@@ -241,7 +241,7 @@ testGetDnbrAppResults() {
     --header 'Accept: application/json' | jq )"
   echo " Process result: $PROCESS_RESULT"
 
-  assertNotNull $PROCESS_RESULT
+  assertNotNull "$PROCESS_RESULT"
 }
 
 
