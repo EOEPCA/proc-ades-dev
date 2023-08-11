@@ -86,7 +86,18 @@ WORKDIR /opt/ZOO-Project
 RUN make -C ./thirds/cgic206 libcgic.a
 RUN cd ./zoo-project/zoo-kernel \
      && autoconf \
-     && ./configure --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=$PY_VER --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr --with-metadb=yes --with-db-backend --with-rabbitmq=yes \
+     #&& ./configure --with-python=/usr/miniconda3/envs/ades-dev --with-pyvers=$PY_VER --with-js=/usr --with-mapserver=/usr --with-ms-version=7 --with-json=/usr  --prefix=/usr --with-metadb=yes --with-db-backend --with-rabbitmq=yes \
+     && ./configure --with-dru=yes \
+     	--with-python=/usr/miniconda3/envs/ades-dev \
+	--with-pyvers=$PY_VER \
+	--with-js=/usr \
+	--with-mapserver=/usr \
+	--with-ms-version=7 \
+	--with-json=/usr \
+	--prefix=/usr \
+	--with-metadb=yes \
+	--with-db-backend \
+	--with-rabbitmq=yes \
      && sed -i "s/-DACCEPT_USE_OF_DEPRECATED_PROJ_API_H/-DPROJ_VERSION_MAJOR=8/g" ./ZOOMakefile.opts \
      && make -j4\
      && make install \
@@ -114,8 +125,9 @@ RUN cd ./zoo-project/zoo-kernel \
      && cd thirds/zcfg2sql && \
      grep CALLBACK ../../zoo-project/zoo-kernel/ZOOMakefile.opts && \
      grep JSON ../../zoo-project/zoo-kernel/ZOOMakefile.opts && \
-     make && \
-     cp zcfg2sql /usr/bin && \
+     #make && \
+     #cp zcfg2sql /usr/bin && \
+     cp /opt/ZOO-Project/zoo-project/zoo-services/utils/security/dru/* /usr/lib/cgi-bin/ && \
      ln -s /tmp/ /var/www/html/temp && \
      mkdir /var/www/html/examples/ && \
      curl -o /var/www/html/examples/deployment-job.json https://raw.githubusercontent.com/EOEPCA/proc-ades/master/test/sample_apps/v2/snuggs/app-deploy-body.json && \

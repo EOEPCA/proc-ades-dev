@@ -1,3 +1,28 @@
+#
+# Author : Blasco Brauzzi, Fabrice Brito, Frank Löschau
+#
+# Copyright 2023 Terradue. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including with
+# out limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+
 import sys
 import json
 import yaml
@@ -206,12 +231,16 @@ class Process:
         import psycopg2
         import psycopg2.extensions
         psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+        if "auth_env" in conf:
+            self.user=conf["auth_env"]["user"]
+        else:
+            self.user="anonymous"
         conn = psycopg2.connect("host=%s port=%s dbname=%s user=%s password=%s" % (conf["metadb"]["host"], conf["metadb"]["port"], conf["metadb"]["dbname"], conf["metadb"]["user"], conf["metadb"]["password"]))
         cur = conn.cursor()
         if "orequest_method" in conf["lenv"]:
-            cur.execute("DELETE FROM collectiondb.ows_process WHERE identifier=$q$%s$q$" % (self.identifier))
+            cur.execute("DELETE FROM collectiondb.ows_process WHERE identifier=$q$%s$q$ and user_id=(select id from public.users where name=$q$%s$q$)" % (self.identifier,self.user))
         conn.commit()
-        cur.execute("SELECT id FROM collectiondb.ows_process WHERE identifier=$q$%s$q$" % (self.identifier))
+        cur.execute("SELECT id FROM collectiondb.ows_process WHERE identifier=$q$%s$q$ and user_id=(select id from public.users where name=$q$%s$q$)" % (self.identifier,self.user))
         vals = cur.fetchone()
         if vals is not None:
             conn.close()
@@ -227,14 +256,22 @@ class Process:
         cur.execute("INSERT INTO CollectionDB.PrivateMetadataDeploymentMetadataAssignment(private_metadata_id,deployment_metadata_id) VALUES"+
                   "((SELECT last_value FROM CollectionDB.zoo_PrivateMetadata_id_seq),"+
                   "(SELECT last_value FROM CollectionDB.zoo_DeploymentMetadata_id_seq));")
+        try:
+            cur.execute("SELECT id from public.users WHERE name = $q${0}$q$".format(self.user))
+            if cur.fetchone() is None:
+                cur.execute("INSERT INTO public.users (name) VALUES ($q${0}$q$)".format(self.user));
+        except Exception as e:
+            print(e,file=sys.stderr)
+            cur.commit()
         cur.execute(("INSERT INTO CollectionDB.ows_Process"+
-                  "(identifier,title,abstract,private_metadata_id,mutable,availability)"+
+                  "(identifier,title,abstract,user_id,private_metadata_id,mutable,availability)"+
                   "VALUES"+
                   "($q${0}$q$,"+
                   "$q${1}$q$,"+
                   "$q${2}$q$,"+
+                  "(select id from public.users where name=$q${3}$q$),"+
                   "(SELECT last_value FROM CollectionDB.PrivateMetadataDeploymentMetadataAssignment_id_seq),"+
-                  "true,true);").format(self.identifier,self.title,self.description))
+                  "true,true);").format(self.identifier,self.title,self.description,self.user))
         cur.execute("CREATE TEMPORARY TABLE pid AS (select last_value as id from CollectionDB.Descriptions_id_seq);")
         # Inputs treatment
         for input in self.inputs:
