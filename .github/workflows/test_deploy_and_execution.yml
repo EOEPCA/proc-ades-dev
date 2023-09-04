@@ -7,6 +7,17 @@ jobs:
   run-ades:
     runs-on: ubuntu-latest
     name: deploy and execute dNBR app to minikube
+
+    services:
+      minio:
+        image: lazybit/minio
+        ports:
+          - 9000:9000
+        env:
+          MINIO_ROOT_USER: minio
+          MINIO_ROOT_PASSWORD: minio123
+        options: --name=minio --health-cmd "curl http://localhost:9000/minio/health/live"
+
     steps:
       - uses: actions/checkout@v2
       - name: Start minikube
@@ -56,14 +67,9 @@ jobs:
             n=$((n + 1))
             sleep 20
           done
-      - name: Install Minio
-        run: |
-          export SHELL=/bin/bash
-          kubectl create ns minio
-          kubectl create -f my-minio-fs.yaml -n minio
-          kubectl expose deployment/my-minio-fs --type="NodePort" --port 9000 -n minio
-          echo "waiting 10 seconds for minio to be ready"
-          sleep 20
-          echo "port-forwarding minio to port 9000"
-          kubectl port-forward svc/my-minio-fs 9000:9000 -n minio >/dev/null 2>&1 &
-          
+      - name: Create bucket in Minio Repos
+        uses: aitorres/aws-s3-create-bucket@v1.2.0
+        with:
+          bucket-name: 'processingresults'
+          aws-access-key-id: minio
+          aws-secret-access-key: minio123
